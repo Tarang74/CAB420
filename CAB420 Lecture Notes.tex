@@ -1,0 +1,235 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{article}
+\input{LaTeX-Submodule/template.tex}
+
+% Additional packages & macros
+
+% Header and footer
+\newcommand{\unitName}{Machine Learning}
+\newcommand{\unitTime}{Semester 1, 2024}
+\newcommand{\unitCoordinator}{Dr Simon Denman}
+\newcommand{\documentAuthors}{Tarang Janawalkar}
+
+\fancyhead[L]{\unitName}
+\fancyhead[R]{\leftmark}
+\fancyfoot[C]{\thepage}
+
+% Copyright
+\usepackage[
+    type={CC},
+    modifier={by-nc-sa},
+    version={4.0},
+    imagewidth={5em},
+    hyphenation={raggedright}
+]{doclicense}
+
+\date{}
+
+\begin{document}
+%
+\begin{titlepage}
+    \vspace*{\fill}
+    \begin{center}
+        \LARGE{\textbf{\unitName}} \\[0.1in]
+        \normalsize{\unitTime} \\[0.2in]
+        \normalsize\textit{\unitCoordinator} \\[0.2in]
+        \documentAuthors
+    \end{center}
+    \vspace*{\fill}
+    \doclicenseThis
+    \thispagestyle{empty}
+\end{titlepage}
+\newpage
+%
+\tableofcontents
+\newpage
+%
+\section{Introduction}
+Machine learning is a field of computer science concerned with the
+development of statistical algorithms that enable computer systems to
+learn insights from data. Machine learning is a multi-disciplinary
+field that is related to statistics, pattern recognition, data mining,
+and artificial intelligence.
+\subsection{Machine Learning Process}
+Broadly speaking, there are three steps to enable machines to learn.
+\begin{enumerate}
+    \item \textbf{Input Data}: A model must be provided with input data.
+          This data consists of audio, images, text, or any other form
+          of data, which enables us to build a model. Ideally, it
+          is desirable to have a large amount of data, as this produces
+          a more accurate model, and removes the possibility of
+          overfitting when many features are present.
+    \item \textbf{Data Abstraction}: To effectively train a model on
+          this data, it needs to be abstracted into a consistent format
+          that can be understood by a model. This includes
+          pre-processing the data, removing any noise or irrelevant
+          features, and ensuring that the dimensionality (or the number
+          of features) is the same across all samples.
+    \item \textbf{Generalisation}: When data is ready, we can use a
+          machine learning technique to determine whether a model
+          generalises well to new data.
+\end{enumerate}
+\subsection{Machine Learning Paradigms}
+There are three main types of machine learning paradigms:
+\begin{itemize}
+    \item \textbf{Supervised Learning}: In this type of learning, a
+          model is provided both input and expected output data. The
+          purpose here is to learn a mapping from input to output, to
+          predict an output for new unseen data.
+
+          For example, we might provide a model a video of pedestrians
+          with a person count in each frame. The model then regresses
+          features such as size, texture, and shape to predict the
+          number of people in unseen frames.
+
+          Another related example may include object tracking, where a
+          model learns to track objects in a video, given a
+          pre-labelled set of frames with tracked objects.
+    \item \textbf{Unsupervised Learning}: In this type of learning, a
+          model is provided only input data, and is mainly used for
+          knowledge discovery---to find order and characteristics in
+          data.
+
+          An example of this is clustering, where a model might group
+          people who are walking together, based on their motion
+          characteristics.
+
+          Another example is the detection of anomalies or abnormal
+          behaviour in data. For example, a model may be trained on
+          pedestrian motion, and use unsupervised learning to track
+          vehicles and bicycles in a pedestrian zone.
+    \item \textbf{Reinforcement Learning}: In this type of learning, a
+          model learns to make decisions by interacting and responding
+          to an environment. The model is rewarded or penalised based on
+          its actions, and its goal is to learn the best sequence of
+          actions to maximise its reward.
+
+          An example of this may be a robot learning to walk. The
+          objective might be to maximise the distance travelled in one
+          direction.
+\end{itemize}
+\subsection{Importance of Data}
+Data is the most important aspect of machine learning, both in terms of
+\textbf{quality and quantity}. A high-quality dataset that is well
+prepared and which covers all possible cases considered in a model,
+leads to better outcomes.
+\begin{itemize}
+    \item a model cannot produce predictions that are better than the
+          data it is trained on
+    \item a model cannot compensate for errors in the annotation of
+          data
+\end{itemize}
+It is also important to consider \textbf{data diversity} to ensure that
+a model does not learn \textbf{biases} present in the data. For example,
+a male dominated dataset may lead to a model that is biased against
+women.
+
+Data also suffers from the \textit{curse of dimensionality}. Datasets
+often have:
+\begin{itemize}
+    \item a large number of dimensions or features (i.e., columns,
+          observed variables)
+    \item but a small number of samples (i.e., rows, observations)
+\end{itemize}
+In such cases, the feature space is sparsely populated and the model
+may \textbf{overfit}. Every new feature increases the complexity
+of the model, and also necessitates more data, to produce an accurate
+model---this number depends on the type of classifier or learning
+algorithm used, and therefore a model should be kept simple.
+\subsection{Data Splitting}
+To efficiently train and evaluate a model, we can split the data into
+three sets:
+\begin{itemize}
+    \item \textbf{Training Set}: This set is used to train the model.
+    \item \textbf{Validation Set}: This set is used to tune model
+          hyperparameters to evaluate a model's performance. The training
+          set will be trained using different hyperparameters to evaluate
+          which set of hyperparameters produce the best model.
+    \item \textbf{Test Set}: This set is used to evaluate the model's
+          performance on unseen data.
+\end{itemize}
+This approach uses \textit{holdout validation} where data is
+\textit{held out} for validation and/or testing, so that the training,
+validation, and testing stages are completely separate. Note that this
+requires datasets to be large enough to ensure that a model has enough
+data for training.
+
+When \textbf{insufficient data} is available, \textit{cross-validation}
+can be used to dynamically split the dataset into training and
+validation sets (i.e., a 80\% training/20\% validation split). This may
+be repeated 5 times, so that each split is used as a validation set.
+The best model is then selected based on the average performance across
+all splits.
+
+In some cases, machine learning \underline{may not be possible} if the
+dataset is too small. This may be because the data does not contain the
+patterns and relationships that we are trying to learn. For some
+problems, this threshold may be a few hundred samples, while for
+others, it may be a few million. Extrapolation beyond the data may also
+be problematic in such cases.
+\subsection{Traditional Machine Learning to Deep Learning}
+\subsubsection{Traditional Machine Learning}
+The traditional machine learning pipeline typically consists of:
+\begin{itemize}
+    \item \textbf{Pre-processing}: Preparing data for a model using
+          normalisation, scaling, noise reduction, etc.
+    \item \textbf{Feature Extraction}: Extracting features from data;
+          MFCC (audio), HOG (image/video), and bag-of-words (text).
+
+          This step is often informed by the task. For example, if we
+          need to recognise shapes in images, we might use a technique
+          that captures edge detection. In the case of audio, we might
+          use a technique that captures frequency information.
+    \item \textbf{Machine Learning}: Passing the features to a model
+          using a machine learning technique.
+\end{itemize}
+In this model, features are \textbf{hand-crafted}, and based on domain-specific
+knowledge. Choosing the optimal features for a given problem can be a
+tedious and iterative process. This leads to different formulations for
+different tasks, and may significantly increase the complexity of a
+problem, especially when we need to extract multiple sets of features.
+\subsubsection{An Aside on Neural Networks}
+A neural network is modelled after the human brain and nervous system.
+It is built on a single unit or \textbf{node} called a \textit{neuron},
+in which data is passed through a series of \textbf{layers}, each of
+which is connected to other neurons through \textbf{edges}. Neural
+networks typically consist of a large number of parameters and many
+interconnections.
+
+Choosing the appropriate number of layers in a neural network (or the
+\textit{depth} of a neural network), is problem dependent. A higher
+depth allows us to learn \textit{higher level features}, and contains
+more parameters, but this is often harder to learn and also increases
+the likelihood of overfitting. Larger networks also require more data,
+and therefore more memory and computational resources.
+\subsubsection{Deep Learning}
+Deep learning is a subset of machine learning that uses neural networks
+to learn features from data. It differs from the traditional machine
+learning pipeline in that it does not require manual feature
+extraction, but instead learns it's own representation from
+pre-processed data. This makes deep learning more \textbf{adaptable} to
+different tasks, and also reduces the complexity of a problem.
+
+A downside of deep learning is that models are often extremely large
+compared to traditional approaches;
+\begin{itemize}
+    \item a traditional machine learning model may have a few hundred
+          parameters
+    \item a deep learning model may have millions of parameters
+\end{itemize}
+This leads to an increase in computational resources required to train
+and evaluate a model, and also makes a model difficult to interpret.
+z
+In deep learning, feature engineering is replaced with \textbf{network
+    engineering}, where we must carefully choose the appropriate
+architecture for a problem. This includes:
+\begin{itemize}
+    \item the number of layers,
+    \item the number of neurons in each layer, and
+    \item the type of activation function used.
+\end{itemize}
+This is often an iterative process, and it may not be feasible to find
+the optimal architecture for a given problem, through exhaustive
+testing.
+\end{document}
