@@ -4,6 +4,7 @@
 \input{LaTeX-Submodule/template.tex}
 
 % Additional packages & macros
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 % Header and footer
 \newcommand{\unitName}{Machine Learning}
@@ -220,9 +221,9 @@ compared to traditional approaches;
 \end{itemize}
 This leads to an increase in computational resources required to train
 and evaluate a model, and also makes a model difficult to interpret.
-z
+
 In deep learning, feature engineering is replaced with \textbf{network
-    engineering}, where we must carefully choose the appropriate
+engineering}, where we must carefully choose the appropriate
 architecture for a problem. This includes:
 \begin{itemize}
     \item the number of layers,
@@ -232,4 +233,201 @@ architecture for a problem. This includes:
 This is often an iterative process, and it may not be feasible to find
 the optimal architecture for a given problem, through exhaustive
 testing.
+\section{Linear Regression}
+A simple model for predicting the relationship between a dependent
+variable \(y\) (\textbf{response}), and an independent variable \(x\)
+(\textbf{predictor}), is a straight line. Given a set of \(n\)
+input-output pairs \(\left( x^{\left( i \right)},\: y^{\left( i
+\right)} \right)\), we can model a linear relationship between \(x\)
+and \(y\) as:
+\begin{equation*}
+    y^{\left( i \right)} = \beta_0 + \beta_1 x^{\left( i \right)}
+\end{equation*}
+where \(\beta_0\) is the \(y\)-\textbf{intercept} and \(\beta_1\) is the
+\textbf{gradient} of the line. In practice, data rarely fits a model
+perfectly and therefore, we will assume the relationship:
+\begin{equation*}
+    \hat{y}\left( x \right) = \hat{\beta}_0 + \hat{\beta}_1 x
+\end{equation*}
+where \(\hat{y}\) is known as the \textbf{hypothesis function} which
+\textbf{predicts} value of \(y\), and \(\hat{\beta}_0\) and
+\(\hat{\beta}_1\) are the \textbf{estimated} values of the
+\textbf{parameters} \(\beta_0\) and \(\beta_1\), respectively. This
+model adds a \textbf{residual} term \(\epsilon\) to account for the
+error in each observation:
+\begin{align*}
+    y^{\left( i \right)} & = \hat{y}\left( x^{\left( i \right)} \right) + \epsilon^{\left( i \right)}         \\
+                         & = \hat{\beta}_0 + \hat{\beta}_1 x^{\left( i \right)} + \epsilon^{\left( i \right)}
+\end{align*}
+here \(\epsilon\) is assumed to be normally distributed with zero mean
+and \(\sigma^2\) variance:
+\begin{equation*}
+    \epsilon \overset{\mathrm{iid}}{\sim} \mathrm{N}\left( 0,\: \sigma^2 \right).
+\end{equation*}
+As \(y\) depends on \(\epsilon\), we can also show that
+\begin{equation*}
+    y \sim \mathrm{N}\left( \beta_0 + \beta_1 x,\: \sigma^2 \right)
+\end{equation*}
+where \(y\) is normally distributed for fixed values of \(x\).
+The values of \(\hat{\beta}_0\) and \(\hat{\beta}_1\) arise when we
+consider the \textbf{loss function}:
+\begin{equation*}
+    L\left( \symbf{\beta} \right) = \frac{1}{2} \epsilon^2 = \frac{1}{2} {\left( y - \hat{y} \right)}^2 = \frac{1}{2} {\left( y - \left( \beta_0 + \beta_1 x \right) \right)}^2.
+\end{equation*}
+which we wish to minimise. As these estimators apply to the entire
+training set, we will consider the \textbf{cost function}:
+\begin{equation*}
+    J\left( \symbf{\beta} \right) = \frac{1}{n} \sum_{i = 1}^n L\left( \beta \right).
+\end{equation*}
+which averages the loss across all observations. The goal of this cost
+function is to find the best parameters \(\hat{\symbf{\beta}}\) that minimise
+the loss across all observations:
+\begin{equation*}
+    \hat{\symbf{\beta}} = \argmin_{\symbf{\beta}} J\left( \symbf{\beta} \right).
+\end{equation*}
+In this model, we must ensure that there are at least as many
+observations as there are parameters to estimate.
+\subsection{Correlation}
+Correlation is a statistical relationship between two variables. This
+measure allows us to determine the strength of a linear relationship
+between two variables. One common measure of correlation is the
+\textbf{Pearson correlation coefficient}, which is given by:
+\begin{equation*}
+    \rho_{xy} = \frac{\sigma_{xy}}{\sigma_x \sigma_y}
+\end{equation*}
+where \(\sigma_{xy}\) is the \textbf{covariance} between \(x\) and \(y\),
+and \(\sigma_x\) and \(\sigma_y\) are the variances of \(x\) and \(y\),
+respectively. Using the sample covariance\footnote{See
+    \hyperref[appendix:numerical-summaries]{Appendix~\ref*{appendix:numerical-summaries}}
+    for more details.}:
+\begin{equation*}
+    r_{xy} = \frac{s_{xy}}{s_x s_y}.
+\end{equation*}
+The sample covariance \(s_{xy}\) has the following characteristics:
+\begin{itemize}
+    \item \(s_{xy} > 0\): \(y\) increases as \(x\) increases
+    \item \(s_{xy} < 0\): \(y\) decreases as \(x\) increases
+    \item \(s_{xy} \approx 0\): no linear relationship between \(x\) and \(y\)
+\end{itemize}
+To generalise this measure across datasets, we often consider the
+\textit{normalised} correlation coefficient \(r_{xy}\), which tells use
+the strength of a linear relationship between two variables. The
+following diagram shows various datasets and their correlation
+coefficients:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{figures/correlation.pdf}
+    \caption{Pearson correlation coefficient of \(x\) and \(y\) for several sets of points.} % \label{}
+\end{figure}
+There are a number of important points to note about the correlation
+coefficient:
+\begin{itemize}
+    \item The correlation coefficient does not contain any information
+          about the gradient, as is seen in the second row.
+    \item A correlation coefficient of 0 indicates \textit{no linear
+          relationship}, it does not imply that there is \textit{no
+          relationship}, as is seen in the third row.
+    \item The correlation coefficient does not imply
+          \textit{causation}. Care must be taken when assuming that a
+          relationship between two variables is causal.
+\end{itemize}
+To minimise redundancy in a model, it is crucial for predictors to be
+correlated with response variables, and uncorrelated to other predictors.
+\subsection{Simple Linear Regression}
+Simple linear regression is a special case of linear regression, where
+we have only one input variable \(x_1\), and we can use the method of
+maximum likelihood estimation to estimate the parameters \(\beta_0\)
+and \(\beta_1\):
+\begin{align*}
+    \hat{\beta}_1 & = \frac{\sum_{i = 1}^n \left( x^{\left( i \right)} - \bar{x} \right) \left( y^{\left( i \right)} - \bar{y} \right)}{\sum_{i = 1}^n {\left( x^{\left( i \right)} - \bar{x} \right)}^2} \\
+    \hat{\beta}_0 & = \bar{y} - \hat{\beta}_1 \bar{x}
+\end{align*}
+where \(\bar{x}\) and \(\bar{y}\) are the sample means of \(x\) and \(y\),
+respectively.
+\subsection{Multiple Linear Regression}
+In multiple linear regression, we consider a \(p\)-dimensional feature
+space, or \(p\) input variables, with \(p + 1\) parameters to estimate.
+Here hypothesis function generalises to:
+\begin{equation*}
+    \hat{y}\left( x \right) = \hat{\beta}_0 x_0 + \hat{\beta}_1 x_1 + \hat{\beta}_2 x_2 + \cdots + \hat{\beta}_p x_p = \sum_{i = 0}^p \hat{\beta}_i x_i = \symbf{\beta}^\top \symbf{x}.
+\end{equation*}
+where we have introduced the feature \(x_0 \coloneq 1\) to simplify our
+notation. There are several ways to estimate \(\hat{\symbf{\beta}}\),
+and here we will use matrix calculus.
+The cost function \(J\left( \symbf{\beta} \right)\) can be written as:
+\begin{equation*}
+    J\left( \symbf{\beta} \right) = \frac{1}{2n} \sum_{i = 1}^n {\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2 = \frac{1}{2n} \norm*{\symbf{y} - \symbf{X} \symbf{\beta}}_2^2 = \frac{1}{2n} \symbf{\epsilon}^\top \symbf{\epsilon}.
+\end{equation*}
+where \(\symbf{X}\) is an \(n \times (p + 1)\) matrix of input variables:
+\begin{equation*}
+    \symbf{x} =
+    \begin{bmatrix}
+        1      & x_1^{\left( 1 \right)} & x_2^{\left( 1 \right)} & \cdots & x_p^{\left( 1 \right)} \\
+        1      & x_1^{\left( 2 \right)} & x_2^{\left( 2 \right)} & \cdots & x_p^{\left( 2 \right)} \\
+        \vdots & \vdots                 & \vdots                 & \ddots & \vdots                 \\
+        1      & x_1^{\left( n \right)} & x_2^{\left( n \right)} & \cdots & x_p^{\left( n \right)}
+    \end{bmatrix}
+\end{equation*}
+Consider the vector derivative of the cost function with respect to \(\symbf{\beta}\):
+\begin{align*}
+    \pdv{J\left( \symbf{\beta} \right)}{\symbf{\beta}} & = \frac{1}{2n} \pdv*{\left[ \symbf{\epsilon}^\top \symbf{\epsilon} \right]}{\symbf{\beta}}                                                                                                                                                                                   \\
+                                                       & = \frac{1}{2n} \pdv*{\left[ {\left( \symbf{y} - \symbf{X} \symbf{\beta} \right)}^\top \left( \symbf{y} - \symbf{X} \symbf{\beta} \right) \right]}{\symbf{\beta}}                                                                                                             \\
+                                                       & = \frac{1}{2n} \pdv*{\left[ {\left( \symbf{y} - \symbf{X} \symbf{\beta} \right)}^\top \symbf{y} - {\left( \symbf{y} - \symbf{X} \symbf{\beta} \right)}^\top \symbf{X} \symbf{\beta} \right]}{\symbf{\beta}}                                                                  \\
+                                                       & = \frac{1}{2n} \pdv*{\left[ \symbf{y}^\top \symbf{y} - {\left( \symbf{X} \symbf{\beta} \right)}^\top \symbf{y} - \symbf{y}^\top \symbf{X} \symbf{\beta} + {\left( \symbf{X} \symbf{\beta} \right)}^\top \symbf{X} \symbf{\beta} \right]}{\symbf{\beta}}                      \\
+                                                       & = \frac{1}{2n} \pdv*{\left[ \symbf{y}^\top \symbf{y} - \symbf{\beta}^\top \left( \symbf{X}^\top \symbf{y} \right) - \left( \symbf{y}^\top \symbf{X} \right) \symbf{\beta} + \symbf{\beta}^\top \left( \symbf{X}^\top \symbf{X} \right) \symbf{\beta} \right]}{\symbf{\beta}} \\
+                                                       & = \frac{1}{2n} \left( -\symbf{X}^\top \symbf{y} - {\left( \symbf{y}^\top \symbf{X} \right)}^\top + 2 \symbf{X}^\top \symbf{X} \symbf{\beta} \right)                                                                                                                          \\
+                                                       & = \frac{1}{n} \left( \symbf{X}^\top \symbf{X} \symbf{\beta} - \symbf{X}^\top \symbf{y} \right).
+\end{align*}
+This implies that the optimal parameters \(\symbf{\beta}\) are given by:
+\begin{align*}
+    \pdv{J\left( \symbf{\beta} \right)}{\symbf{\beta}}                & = \symbf{0}                                                                \\
+    \symbf{X}^\top \symbf{X} \symbf{\beta} - \symbf{X}^\top \symbf{y} & = \symbf{0}                                                                \\
+    \symbf{X}^\top \symbf{X} \symbf{\beta}                            & = \symbf{X}^\top \symbf{y}                                                 \\
+    \symbf{\beta}                                                     & = {\left( \symbf{X}^\top \symbf{X} \right)}^{-1} \symbf{X}^\top \symbf{y}.
+\end{align*}
+\subsection{Assumptions of Linear Regression}
+There are several assumptions that must be satisfied for linear
+regression to be valid:
+\begin{enumerate}
+    \item \textbf{Linearity}: The relationship between the responses and
+          predictors is linear.
+    \item \textbf{Independence}: Responses are linearly independent.
+    \item \textbf{No Multicollinearity}: Predictors are not linearly
+          dependent.
+    \item \textbf{Normality}: Residuals are normally distributed.
+    \item \textbf{Homoscedasticity}: Residuals have constant variance.
+    \item \textbf{Exogeneity}: There is no correlation between
+          predictors and residuals.
+\end{enumerate}
+ \newpage
+\begin{appendix}
+    \section{Numerical Summaries of Data}\label{appendix:numerical-summaries}
+    \subsection{Mean}
+    The mean of a set of \(n\) observations \(\left( x^{\left( i
+    \right)} \right)\) is given by:
+    \begin{equation*}
+        \bar{x} = \frac{1}{n} \sum_{i = 1}^n x^{\left( i \right)}
+    \end{equation*}
+    \subsection{Variance}
+    The variance of a set of \(n\) observations \(\left( x^{\left( i
+    \right)} \right)\) is given by:
+    \begin{equation*}
+        \sigma^2 = \frac{1}{n} \sum_{i = 1}^n {\left( x^{\left( i \right)} - \bar{x} \right)}^2
+    \end{equation*}
+    For a sample, the variance is given by:
+    \begin{equation*}
+        s^2 = \frac{1}{n - 1} \sum_{i = 1}^n {\left( x^{\left( i \right)} - \bar{x} \right)}^2
+    \end{equation*}
+    \subsection{Covariance}
+    The covariance between two sets of \(n\) observations \(\left(
+    x^{\left( i \right)} \right)\) and \(\left( y^{\left( i \right)}
+    \right)\) is given by:
+    \begin{equation*}
+        \sigma_{xy} = \frac{1}{n} \sum_{i = 1}^n \left( x^{\left( i \right)} - \bar{x} \right) \left( y^{\left( i \right)} - \bar{y} \right)
+    \end{equation*}
+    For a sample, the covariance is given by:
+    \begin{equation*}
+        s_{xy} = \frac{1}{n - 1} \sum_{i = 1}^n \left( x^{\left( i \right)} - \bar{x} \right) \left( y^{\left( i \right)} - \bar{y} \right)
+    \end{equation*}
+\end{appendix}
 \end{document}
