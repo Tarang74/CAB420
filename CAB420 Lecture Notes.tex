@@ -389,17 +389,228 @@ This implies that the optimal parameters \(\symbf{\beta}\) are given by:
 There are several assumptions that must be satisfied for linear
 regression to be valid:
 \begin{enumerate}
-    \item \textbf{Linearity}: The relationship between the responses and
+    \item \textbf{Linearity}: The relationship between the response and
           predictors is linear.
-    \item \textbf{Independence}: Responses are linearly independent.
     \item \textbf{No Multicollinearity}: Predictors are not linearly
           dependent.
+    \item \textbf{Independence}: Responses are linearly independent.
     \item \textbf{Normality}: Residuals are normally distributed.
     \item \textbf{Homoscedasticity}: Residuals have constant variance.
     \item \textbf{Exogeneity}: There is no correlation between
           predictors and residuals.
 \end{enumerate}
- \newpage
+\subsection{Testing the Assumptions of Linear Regression}
+To test the above assumptions, we can use the following techniques:
+\begin{itemize}
+    \item Plots of predictions and actual values: Compare the
+          regression with actual values
+    \item Regression outputs: \(R^2\), adjusted \(R^2\), F-statistic,
+          RMSE (root mean squared error)
+    \item Correlation: Correlation between pairs of predictors, and
+          between the response and predictors
+    \item Analysis of residuals: Testing the normality and variance of
+          residuals
+\end{itemize}
+\subsubsection{Linearity}
+\begin{itemize}
+    \item \textbf{Scatter plot}: Plot observations with the predicted
+          model to visually check for linearity
+    \item \textbf{Residual plot}: Plot residuals against predictors. If
+          the residuals are randomly distributed about 0, then the model
+          suggests linearity
+\end{itemize}
+\subsubsection{No Multicollinearity}
+\begin{itemize}
+    \item \textbf{Correlation matrix}: Check for high correlation
+          between predictors, i.e., \(\abs*{r_{x_1,x_2}} > 0.7\)
+\end{itemize}
+High correlation between predictors may result in unreliable
+\(p\)-values. In this case, it might be necessary to remove one of the
+predictors from the model.
+\subsubsection{Independence}
+It is important to verify that responses are independent of each other.
+In time series data, this assumption can be tested using the
+\textbf{Durbin-Watson} test, which tests for the presence of
+\textbf{autocorrelation} in the residuals. A value close to 2 suggests
+no autocorrelation, while a value close to 0 or 4 suggests positive or
+negative autocorrelation, respectively.
+\subsubsection{Normality}
+\begin{itemize}
+    \item \textbf{Q-Q plot}: A quantile-quantile plot can be used to
+          compare the distribution of residuals to a normal distribution.
+          In this plot, we should expect the residuals to lie on a straight
+          line.
+    \item \textbf{Histogram}: A histogram of residuals can also be used
+          to check for normality.
+\end{itemize}
+\subsubsection{Homoscedasticity}
+\begin{itemize}
+    \item \textbf{Residual plot}: Plot residuals against predicted
+          values. A constant spread of residuals about 0 suggests
+          homoscedasticity.
+\end{itemize}
+\subsubsection{Exogeneity}
+\begin{itemize}
+    \item \textbf{Residual plot}: Plot residuals against predictors. If
+          the residuals are randomly distributed about 0, then the model
+          suggests exogeneity.
+\end{itemize}
+\subsection{Testing Overal Model Fit}
+The OLS (Ordinary Least Squares) model in the \texttt{statsmodels}
+package can be used to produce regression outputs from a linear
+regression model. The following table is an example of the output from
+a linear regression model:
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lrlr}
+        \toprule
+        \textbf{Dep. Variable:}    & \(y\)         & \textbf{R-squared:}          & \(R^2\)                                                  \\
+        \textbf{Model:}            & OLS           & \textbf{Adj. R-squared:}     & \(\bar{R}^2\)                                            \\
+        \textbf{Method:}           & Least Squares & \textbf{F-statistic:}        & \(F_{\mathrm{test}}\)                                    \\
+        \textbf{Date:}             & Date          & \textbf{Prob (F-statistic):} & \(\Pr{\left( F_{p, n - p} > F_{\mathrm{test}} \right)}\) \\
+        \textbf{Time:}             & Time          & \textbf{Log-Likelihood:}     & \(\ln{\left( \hat{L} \right)}\)                          \\
+        \textbf{No. Observations:} & \(n\)         & \textbf{AIC:}                & AIC                                                      \\
+        \textbf{Df Residuals:}     & \(n - p - 1\) & \textbf{BIC:}                & BIC                                                      \\
+        \textbf{Df Model:}         & \(p\)         &                              &                                                          \\
+        \textbf{Covariance Type:}  & nonrobust     &                              &                                                          \\
+        \bottomrule
+    \end{tabular}
+    \caption{OLS Regression Results} % \label{}
+\end{table}
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lccccc}
+        \toprule
+                & \textbf{coef}     & \textbf{std err}                            & \(t\)                                             & \(p > \abs*{t}\)                                                                                                & \(\left[0.025,\:  0.975 \right]\)                                                                                            \\ % chktex 9
+        \midrule
+        \(x_0\) & \(\hat{\beta}_0\) & \(\mathrm{SE}\left( \hat{\beta}_0 \right)\) & \(t_{\mathrm{test}}\left( \hat{\beta}_0 \right)\) & \(\Pr{\left( t_{\mathrm{df}_{\mathrm{error}}} > \abs*{t_{\mathrm{test}}\left( \hat{\beta}_0 \right)} \right)}\) & \(\hat{\beta}_0 \pm t_{\frac{\alpha}{2},\mathrm{test}}\left( \hat{\beta}_0 \right) \mathrm{SE}\left( \hat{\beta}_0 \right)\) \\
+        \(x_1\) & \(\hat{\beta}_1\) & \(\mathrm{SE}\left( \hat{\beta}_1 \right)\) & \(t_{\mathrm{test}}\left( \hat{\beta}_1 \right)\) & \(\Pr{\left( t_{\mathrm{df}_{\mathrm{error}}} > \abs*{t_{\mathrm{test}}\left( \hat{\beta}_1 \right)} \right)}\) & \(\hat{\beta}_1 \pm t_{\frac{\alpha}{2},\mathrm{test}}\left( \hat{\beta}_1 \right) \mathrm{SE}\left( \hat{\beta}_1 \right)\) \\
+        \(\vdots\)                                                                                                                                                                                                                                                                                                                                                                     \\
+        \(x_p\) & \(\hat{\beta}_p\) & \(\mathrm{SE}\left( \hat{\beta}_p \right)\) & \(t_{\mathrm{test}}\left( \hat{\beta}_p \right)\) & \(\Pr{\left( t_{\mathrm{df}_{\mathrm{error}}} > \abs*{t_{\mathrm{test}}\left( \hat{\beta}_p \right)} \right)}\) & \(\hat{\beta}_p \pm t_{\frac{\alpha}{2},\mathrm{test}}\left( \hat{\beta}_p \right) \mathrm{SE}\left( \hat{\beta}_p \right)\) \\
+        \bottomrule
+    \end{tabular}
+    \caption{OLS Regression Coefficients} % \label{}
+\end{table}
+The following quantities will be used in the following discussion:
+\begin{itemize}
+    \item Total sum of squares (SST): Total variation in the response
+          variable
+          \begin{equation*}
+              \mathrm{SST} = \sum_{i = 1}^n {\left( y^{\left( i \right)} - \bar{y} \right)}^2
+          \end{equation*}
+    \item Error sum of squares (SSE): Total variation in the response
+          variable not explained by the model
+          \begin{equation*}
+              \mathrm{SSE} = \sum_{i = 1}^n {\left( y^{\left( i \right)} - \hat{y}\left( x^{\left( i \right)} \right) \right)}^2
+          \end{equation*}
+    \item Regression sum of squares (SSR): Variation in the response
+          variable explained by the model
+          \begin{equation*}
+              \mathrm{SSR} = \sum_{i = 1}^n {\left( \hat{y}\left( x^{\left( i \right)} \right) - \bar{y} \right)}^2
+          \end{equation*}
+\end{itemize}
+The following relationship holds between the sum of squares:
+\begin{equation*}
+    \mathrm{SST} = \mathrm{SSE} + \mathrm{SSR}.
+\end{equation*}
+The quantities in the regression results are described below:
+\begin{itemize}
+    \item The \textbf{coefficient of determination} \(R^2\) measures
+          the proportion of the variance in the dependent variable
+          explained by the predictors.
+          \begin{equation*}
+              R^2 = 1 - \frac{\mathrm{SSE}}{\mathrm{SST}} = \frac{\mathrm{SSR}}{\mathrm{SST}}
+          \end{equation*}
+    \item The \textbf{adjusted coefficient of determination}
+          \(\bar{R}^2\) takes into account the number of predictors in
+          the model.
+          \begin{equation*}
+              \bar{R}^2 = 1 - \frac{\mathrm{SSE} / \mathrm{df}_{\mathrm{error}} }{\mathrm{SST} / \mathrm{df}_{\mathrm{total}}}
+          \end{equation*}
+          where \(\mathrm{df}_{\mathrm{error}} = n - p - 1\) and
+          \(\mathrm{df}_{\mathrm{total}} = n - 1\) are the degrees of freedom
+          for the error and total sum of squares, respectively.
+    \item The \textbf{F-statistic} is used to test the overall
+          significance of the model. It is given by:
+          \begin{equation*}
+              F_{\mathrm{test}} = \frac{\left( \mathrm{SSR} / p \right)}{\left( \mathrm{SSE} / \mathrm{df}_{\mathrm{error}} \right)}
+          \end{equation*}
+    \item The probability \(\Pr{\left( F_{p, n - p} > F_{\mathrm{test}}
+          \right)}\) is the probability of observing an F-statistic
+          greater than \(F_{\mathrm{test}}\) under the null hypothesis
+          that the model is statistically insignificant. A value less
+          than 0.05 suggests that the model is statistically
+          significant.
+    \item The \textbf{Log Likelihood} \(\ln{\left( \hat{L} \right)}\)
+          is a measure of how well the model fits the data.
+          \begin{equation*}
+              \ln{\left( \hat{L} \right)} = -\frac{n}{2} \log{\left( 2 \pi \right)} - \frac{n}{2} \log{\left( \frac{\mathrm{SSE}}{n} \right)} - \frac{n}{2}
+          \end{equation*}
+          where \(\hat{L}\) is the maximum value of the likelihood
+          function for the model.
+    \item The \textbf{Akaike Information Criterion} (AIC) and
+          \textbf{Bayesian Information Criterion} (BIC) are used to
+          compare models. They are given by:
+          \begin{align*}
+              \mathrm{AIC} & = 2\left( p + 1 \right) - 2 \ln{\left( \hat{L} \right)}                      \\
+              \mathrm{BIC} & = \left( p + 1 \right) \ln{\left( n \right)} - 2 \ln{\left( \hat{L} \right)}
+          \end{align*}
+          Smaller values of AIC and BIC suggest a better model fit.
+\end{itemize}
+The quantities in the coefficient table are described below:
+\begin{itemize}
+    \item The \textbf{coefficient} \(\beta_i\) is the estimated value
+          of the parameter \(\beta_i\).
+    \item The \textbf{standard error} \(\mathrm{SE}\left(
+          \symbf{\hat{\beta}} \right)\) is the standard deviation of
+          the sampling distribution of the coefficient. It can be
+          computed as:
+          \begin{equation*}
+              \mathrm{SE}\left( \symbf{\hat{\beta}} \right) = \sqrt{\frac{\mathrm{SSE}}{\mathrm{df}_{\mathrm{error}}} \diag{\left( \left( \symbf{X}^\top \symbf{X} \right)^{-1} \right)}}
+          \end{equation*}
+          The results is a \(p + 1\) column vector of standard errors for each
+          coefficient.
+    \item The \textbf{t-statistic} \(t_{\mathrm{test}}\left(
+          \symbf{\hat{\beta}} \right)\) is used to test the null
+          hypothesis that the coefficient is equal to 0. It is given
+          by:
+          \begin{equation*}
+              t_{\mathrm{test}}\left( \symbf{\hat{\beta}} \right) = \frac{\symbf{\hat{\beta}}}{\mathrm{SE}\left( \symbf{\hat{\beta}} \right)}
+          \end{equation*}
+    \item The \textbf{p-value} \(p > \abs*{t}\) is the probability of
+          observing a t-statistic greater than \(\abs*{t}\) under the
+          null hypothesis that the coefficient is equal to 0. A value
+          less than 0.05 suggests that the coefficient is statistically
+          significant.
+          \begin{equation*}
+              \Pr{\left( t_{\mathrm{df}_{\mathrm{error}}} > \abs*{t_{\mathrm{test}}\left( \symbf{\hat{\beta}} \right)} \right)} = 2 \Pr{\left( t_{\mathrm{df}_{\mathrm{error}}} > t_{\mathrm{test}}\left( \symbf{\hat{\beta}} \right) \right)}
+          \end{equation*}
+    \item The \textbf{confidence interval} \(\left[0.025,
+          0.975\right]\) is the range of values that the coefficient is
+          likely to lie in. It is given by:
+          \begin{equation*}
+              \left[0.025, 0.975\right] = \symbf{\hat{\beta}} \pm t_{\frac{\alpha}{2}, \mathrm{df}_{\mathrm{error}}} \mathrm{SE}\left( \symbf{\hat{\beta}} \right)
+          \end{equation*}
+          where \(t_{\frac{\alpha}{2}, \mathrm{df}_{\mathrm{error}}}\) is the critical
+          value of the \(t\)-distribution for a given significance level
+          \(\alpha\). In this case, \(\alpha = 0.05\).
+\end{itemize}
+Another measure of error of a model is the \textbf{root mean squared
+    error} (RMSE), which is given by:
+\begin{equation*}
+    \mathrm{RMSE} = \sqrt{\frac{1}{n} \sum_{i = 1}^n {\left( y^{\left( i \right)} - \hat{y}\left( x^{\left( i \right)} \right) \right)}^2} = \sqrt{\frac{\mathrm{SSE}}{n}}
+\end{equation*}
+\subsubsection{p-Values}
+The \(p\)-values obtained from the F-statistic and t-statistic are
+used to test the significance of the model and the coefficients,
+respectively. The \(p\)-value is the probability of observing a
+statistic greater than the observed value under the null hypothesis.
+A small \(p\)-value suggests that the null hypothesis is unlikely to
+be true, and therefore, the coefficient is statistically significant.
+
+It is important to note that \(p\)-values can be misleading when model
+assumptions are violated.
+\newpage
 \begin{appendix}
     \section{Numerical Summaries of Data}\label{appendix:numerical-summaries}
     \subsection{Mean}
