@@ -1,0 +1,41 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{circuitikz}
+
+\definecolor{pink}{RGB}{253,23,153}
+\definecolor{lightblue}{RGB}{143,186,230}
+\definecolor{darkblue}{RGB}{30,90,189}
+\definecolor{grey}{RGB}{148,148,148}
+\definecolor{red}{RGB}{230,30,113}
+
+\begin{document}
+\begin{tikzpicture}[pics/axis/.style={code={
+        \draw[thick,->] (-1,0) -- (3,0) node[anchor=west] {\(\beta_1\)};
+        \draw[thick,->] (0,-1) -- (0,3) node[anchor=south] {\(\beta_2\)};
+    }},pics/norm penalty/.style={code={
+        \draw[darkblue, fill=lightblue] (0,0.5) to[out=-45+#1,in=135-#1]
+        (0.5,0) to[out=-135+#1,in=45-#1]
+        (0,-0.5) to[out=135+#1,in=-45-#1]
+        (-0.5,0) to[out=45+#1,in=-135-#1] cycle;
+    }}
+    ]
+    \path (0,0) pic{axis} (0,0) pic[thick,looseness=0,fill opacity=0.8]{norm penalty=45};
+    \node[label={[darkblue,xshift=15]below right:\(\norm*{\symbf{\beta}}_1 \leqslant t\)}] at (0, 0) {};
+    \coordinate[label={[grey]below left:\(\hat{\symbf{\beta}}\)}] (beta) at (1.5,2);
+    \fill[red] (beta) circle (0.04);
+    \foreach \X in {1,1.2,1.4,1.6,1.8,2.0}
+        \draw[rotate=40,grey] (beta) circle({1*\X} and {0.3*\X});
+   \end{tikzpicture}
+\end{document}
