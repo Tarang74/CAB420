@@ -1,0 +1,33 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{circuitikz}
+
+\begin{document}
+\begin{tikzpicture}
+    % FP
+    \fill[red,opacity=0.4] (0, 0) rectangle (3, 3);
+    \node at (1.5, 1.5) {\parbox[c]{28mm}{\centering\textbf{FP}\\[2ex]False Positives}};
+    % TP
+    \fill[green,opacity=0.4] (0, 3) rectangle (3, 6);
+    \node at (1.5, 4.5) {\parbox[c]{28mm}{\centering\textbf{TP}\\[2ex]True Positives}};
+    % TN
+    \fill[green,opacity=0.4] (3, 0) rectangle (6, 3);
+    \node at (4.5, 1.5) {\parbox[c]{28mm}{\centering\textbf{TN}\\[2ex]True Negatives}};
+    % FN
+    \fill[red,opacity=0.4] (3, 3) rectangle (6, 6);
+    \node at (4.5, 4.5) {\parbox[c]{28mm}{\centering\textbf{FN}\\[2ex]False Negatives}};
+    \draw (3, 0) -- (3, 6);
+    \draw (0, 3) -- (6, 3);
+    \draw[thick] (0, 0) rectangle (6, 6);
+    \node at (3, 6.5) {\textbf{Predicted class}};
+    \node at (-0.5, 3) {\rotatebox{90}{\textbf{Actual class}}};
+\end{tikzpicture}
+\end{document}

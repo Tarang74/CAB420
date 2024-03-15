@@ -7,6 +7,7 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator{\sgn}{sgn}
 \usepackage{subcaption}
+\usepackage{tabularray}
 
 % Header and footer
 \newcommand{\unitName}{Machine Learning}
@@ -773,8 +774,8 @@ by adding a penalty term to the diagonal of the covariance matrix. This
 reduces the likelihood of the matrix being singular when it's columns
 are linearly dependent.
 \subsection{Ridge vs LASSO Regularisation}
-When choosing between ridge and LASSO regularisation, it is important to
-understand their advantages and disadvantages.
+When choosing between ridge and LASSO regularisation, it is important
+to understand their advantages and disadvantages.
 \begin{itemize}
     \item Ridge regression is typically faster to train than LASSO
           regression, as it has a closed-form solution.
@@ -782,7 +783,7 @@ understand their advantages and disadvantages.
           regression, as it can shrink coefficients to 0, effectively
           performing feature selection.
     \item LASSO regression performs faster during the testing phase, as
-        the model has fewer coefficients to compute.
+          the model has fewer coefficients to compute.
 \end{itemize}
 To understand why LASSO regression can eliminate coefficients, consider
 the optimisation problem where the objective function is
@@ -812,6 +813,182 @@ of \(J\) to intersect the constraint region at the axes, leading to a
 sparse solution. Because of it's constant radius, ridge regression tends
 to produce a solution with small coefficients that are not necessarily
 zero.
+\section{Classification}
+Classification is a supervised learning task that predicts classes of
+categorical data. There are two main types of classification:
+\begin{itemize}
+    \item \textbf{Binary classification:} The response variable has two classes.
+    \item \textbf{Multiclass classification:} The response variable has more than
+          \(N\) classes.
+\end{itemize}
+\subsection{Classification Metrics}
+In binary classification, the confusion matrix is a table that is used
+to describe the performance of a classification model. It has the
+following metrics:
+\begin{figure}[H]
+    \centering
+    \includegraphics[height = 5cm]{figures/confusion_matrix.pdf}
+    % \caption{} % \label{}
+\end{figure}
+The following metrics are used to assess the performance of binary
+classification models.
+\begin{table}[H]
+    \centering
+    \begin{tblr}
+        {hlines,colspec={|Q[c,m]|Q[c,m]|Q[l,m]|}, rowsep=2ex, colsep=2ex}
+        \textbf{Metric}    & \textbf{Formula}                                                                                                 & \textbf{Interpretation}               \\
+        Accuracy           & \(\displaystyle\frac{\mathrm{TP} + \mathrm{TN}}{\mathrm{TP} + \mathrm{TN} + \mathrm{FP} + \mathrm{FN}}\)         & Overall performance of model          \\
+        Precision          & \(\displaystyle\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FP}} \)                                                  & Accuracy of positive predictions      \\
+        Recall Sensitivity & \(\displaystyle\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FN}}\)                                                   & Coverage of actual positive samples   \\
+        Sensitivity        & \(\displaystyle\frac{\mathrm{TN}}{\mathrm{TN} + \mathrm{FP}}\)                                                   & Coverage of actual negative samples   \\
+        F1 Score           & \(\displaystyle\frac{2 \times \mathrm{Precision} \times \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}\) & Harmonic mean of precision and recall \\
+    \end{tblr}
+    % \caption{} % \label{}
+\end{table}
+Compared to accuracy, precision and recall provide a more detailed
+analysis of how a model performs. Choosing the right metric depends on
+what is important for a problem:
+\begin{itemize}
+    \item If we wish to minimise false negatives: Use recall.
+    \item If we wish to minimise false positives: Use precision.
+    \item For overall performance: Use accuracy.
+\end{itemize}
+These metrics can also be generalised to multiclass classification by
+computing them for each class. Here we must consider datasets with class
+imbalance, as the metrics may be biased towards the majority class.
+\subsection{Support Vector Machines}
+Support Vector Machines (SVM) are a supervised learning model used for
+binary classification. The model works by finding a hyperplane that
+separates classes with the maximum margin. Consider a dataset of \(n\)
+points of the form:
+\begin{equation*}
+    \left\{ \left( \symbf{x}^{\left( i \right)},\: y^{\left( i \right)} \right) \right\}
+\end{equation*}
+where \(\symbf{x}^{\left( i \right)} \in \R^p\) is a \(p\)-dimensional
+and \(y^{\left( i \right)} \in \left\{ -1,\: {+}1 \right\}\) indicates the
+class of the \(i\)th point. We can model a \(p\)-dimensional
+hyperplane by the equation:
+\begin{equation*}
+    \symbf{w}^\top \symbf{x} - b = 0
+\end{equation*}
+where \(\symbf{w} \in \R^p\) is a vector normal to the hyperplane and
+\(b \in \R\) is the bias term. In this model, the distance between the
+hyperplane and the origin is given by \(\abs*{b} / \norm*{\symbf{w}}\).
+\subsubsection{Hard Margin SVM}
+If a dataset is linearly separable, we can select two parallel
+hyperplanes that separate the classes, such that the distance between
+them is maximised.
+% Given a normalised or standardised dataset, these hyperplanes can be
+% described by
+% \begin{equation*}
+%     \symbf{w}^\top \symbf{x} - b = +1
+% \end{equation*}
+% such that all points on and above this hyperplane are of class \({+}1\), and
+% \begin{equation*}
+%     \symbf{w}^\top \symbf{x} - b = {-}1
+% \end{equation*}
+% such that all points on and below this hyperplane are of class \({-}1\).
+We start by defining the \textbf{functional margin} of a point
+\(\symbf{x}^{\left( i \right)}\) as
+\begin{equation*}
+    \hat{\gamma}^{\left( i \right)} = y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right)
+\end{equation*}
+and the \textbf{functional margin} of the optimal hyperplane as
+\begin{equation*}
+    \hat{\gamma} = \min_{i =  1,\:\dots,\: n} \hat{\gamma}^{\left( i \right)}
+\end{equation*}
+This value represents the \textbf{correctness} and \textbf{confidence}
+of the classification of a point for a given hyperplane:
+\begin{itemize}
+    \item A hyperplane correctly classifies a point when
+          \(\hat{\gamma}^{\left( i \right)} > 0\).
+    \item A hyperplane confidentally classifies a point when
+          \(\abs*{\hat{\gamma}^{\left( i \right)}} \gg 0\).
+\end{itemize}
+Using this definition, we also define the \textbf{geometric margin} of a
+point \(\symbf{x}^{\left( i \right)}\), to allow us to compare the
+confidence of points across different hyperplanes:
+\begin{equation*}
+    \gamma^{\left( i \right)} = \frac{\hat{\gamma}^{\left( i \right)}}{\norm*{\symbf{w}}}.
+\end{equation*}
+In a similar manner, the \textbf{geometric margin} of the optimal
+hyperplane is defined:
+\begin{equation*}
+    \gamma = \frac{\hat{\gamma}}{\norm*{\symbf{w}}}
+\end{equation*}
+To understand why we define the functional margin in this way, consider
+the points \(\symbf{x}_{{+}}\) that are classified as \({+}1\), and the
+points \(\symbf{x}_{{-}}\) that are classified as \({-}1\). We wish to
+constrain the two classes by the hyperplanes:
+\begin{gather*}
+    \symbf{w}^\top \symbf{x}_{{+}} - b \geqslant {+}\hat{\gamma} \\
+    \symbf{w}^\top \symbf{x}_{{-}} - b \leqslant {-}\hat{\gamma}
+\end{gather*}
+If we multiply both equations by \(y\),
+which for \(\symbf{x}_{{+}}\) is \({+}1\), and for \(\symbf{x}_{{-}}\)
+is \({-}1\), we find:
+\begin{gather*}
+    \begin{cases}
+        y \left( \symbf{w}^\top \symbf{x}_{{+}} - b \right) \geqslant \hat{\gamma} \\
+        y \left( \symbf{w}^\top \symbf{x}_{{-}} - b \right) \geqslant \hat{\gamma}
+    \end{cases}
+    \\[1ex]
+    \therefore\:\: y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant \hat{\gamma}.
+\end{gather*}
+We can then pose the following optimisation problem:
+\begin{align*}
+    \max_{\hat{\gamma},\: \symbf{w},\: b} \quad & \frac{\hat{\gamma}}{\norm*{\symbf{w}}}                                                                                                                                                          \\
+    \text{subject to} \quad     & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant \hat{\gamma}, \quad \forall i = 1,\: \dots,\: n
+\end{align*}
+This is a non-convex problem, as the objective function contains the
+nonlinear term \(\norm*{\symbf{w}}\). If we impose the constraint
+\begin{equation*}
+    \hat{\gamma} = 1
+\end{equation*}
+and note that maximising \(\hat{\gamma} / \norm*{\symbf{w}} = 1 / \norm*{\symbf{w}}\)
+is the same as minimising \(\norm*{\symbf{w}}^2\), we can solve the
+equivalent problem:
+\begin{align*}
+    \min_{\symbf{w},\: b} \quad & \frac{1}{2}\norm*{\symbf{w}}^2                                                                                                                                                          \\
+    \text{subject to} \quad     & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant 1, \quad \forall i = 1,\: \dots,\: n.
+\end{align*}
+This is an optimisation problem with a convex quadratic objective
+function and linear constraints whose solution gives us the
+\textbf{optimal margin classifier}. The following figure shows a
+geometric interpretation of the optimal margin classifier:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{figures/hard_margin_svm.pdf}
+    % \caption{} % \label{}
+\end{figure}
+The \textbf{decision boundary} is completely determined by the points
+that lie nearest to it. These points are called \textbf{support vectors}.
+\subsubsection{Soft Margin SVM}
+The derivation of the SVM assumes that a dataset is linearly separable,
+however we cannot guarantee this will always be the case. Additionally,
+outliers in the dataset can cause the optimal margin classifier to
+change dramatically, and produce a much smaller margin. To allow this
+algorithm to work with non-linearly separable datasets, and also be
+less sensitive to outliers, we will reformulate our optimisation
+problem using a slack variable \(\xi^{\left( i \right)}\) for each
+point \(\symbf{x}^{\left( i \right)}\):
+\begin{align*}
+    \min_{\symbf{w},\: b,\: \xi} \quad & \frac{1}{2}\norm*{\symbf{w}}^2 + C \sum_{i = 1}^n \xi^{\left( i \right)}                                                                                     \\
+    \text{subject to} \quad             & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant 1 - \xi^{\left( i \right)}, \quad \forall i = 1,\: \dots,\: n \\
+                                        & \xi^{\left( i \right)} \geqslant 0, \quad \forall i = 1,\: \dots,\: n
+\end{align*}
+Modifying the first constraint now allows points to be misclassified
+with a penalty \(C \xi^{\left( i \right)}\). The hyperparameter \(C\) is
+a regularisation parameter that controls the trade-off between the
+margin and the slack variables.
+\begin{itemize}
+    \item A small value of \(C\) will penalise misclassifications less,
+         and result in a larger margin.
+    \item A large value of \(C\) will penalise misclassifications more,
+         and result in a smaller margin.
+\end{itemize}
+\(C = \infty\) is equivalent to the hard margin SVM.
+
 \newpage
 \begin{appendix}
     \section{Numerical Summaries of Data}\label{appendix:numerical-summaries}

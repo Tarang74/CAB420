@@ -14,7 +14,7 @@
 \usepackage{pgfplots}
 \usepackage{circuitikz}
 
-\definecolor{pink}{RGB}{253,23,153}
+\definecolor{pink}{RGB}{255,52,124}
 \definecolor{lightblue}{RGB}{143,186,230}
 \definecolor{darkblue}{RGB}{30,90,189}
 \definecolor{grey}{RGB}{148,148,148}

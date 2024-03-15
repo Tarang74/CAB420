@@ -1,0 +1,82 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{fontspec}
+
+\newfontfamily\Sans{Montserrat SemiBold}
+
+\newcommand{\SansFont}[1]
+{%
+    \Sans%
+    \fontsize{12pt}{12pt}\selectfont%
+    #1
+}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{circuitikz}
+
+\usetikzlibrary{arrows.meta}
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+
+\definecolor{pink}{RGB}{255,52,124}
+\definecolor{blue}{RGB}{50,205,255}
+\definecolor{darkgrey}{RGB}{48,48,48}
+
+\begin{document}
+\begin{tikzpicture}
+    % Hyperplanes
+    \draw[darkgrey, very thick] (0, 0) -- (4.4, 3.3) node[black, near end, sloped, below] {\(\symbf{w}^\top \symbf{x} - b = 0\)};
+    \draw[darkgrey, dashed, thick] (-0.9, 1.2) -- ++ (4.4, 3.3) node[black, near end, sloped, above] {\(\symbf{w}^\top \symbf{x} - b = {+}1\)} coordinate (A);
+    \draw[darkgrey, dashed, thick] (0.9, -1.2) -- ++ (4.4, 3.3) node[black, near end, sloped, below] {\(\symbf{w}^\top \symbf{x} - b = -1\)} coordinate (B);
+    % Margin
+    \draw[darkgrey, dotted, thick] (A) -- (B) node[black, midway, sloped, above] {\(\displaystyle\frac{2}{\norm*{\symbf{w}}}\)};
+    % Blue points above, pink below
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-1.3, 2.01) circle (0.15);
+    \draw[darkgrey, very thick, fill=blue] (0, 1.875) circle (0.15);    % support vector
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-2.48, 2.96) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-0.61, 2.2) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (0.07, 2.91) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-0.97, 2.85) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-1.59, 1.33) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-1.74, 3.15) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-0.58, 3.42) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-3.53, 2.14) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-2.56, 1.31) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-1.9, 2.21) circle (0.15);
+    \draw[darkgrey, thick, fill=blue, fill opacity=0.8] (-2.65, 2.09) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (2.53, -1.11) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (4.05, -0.76) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (4.06, 0.16) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (5.64, -0.25) circle (0.15);
+    \draw[darkgrey, very thick, fill=pink] (1.8, -0.525) circle (0.15); % support vector
+    \draw[darkgrey, very thick, fill=pink] (2.5, 0) circle (0.15);      % support vector
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (5.01, 0.08) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (6.9, -0.13) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (3.48, -0.64) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (5.08, -0.68) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (6.51, -0.8) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (3.25, -1.6) circle (0.15);
+    \draw[darkgrey, thick, fill=pink, fill opacity=0.8] (5.63, 0.8) circle (0.15);
+    % Support vectors
+    \pgfmathsetmacro{\radius}{0.20}
+    \coordinate (sv1) at ({\radius*cos(260)},{1.875+\radius*sin(260)});
+    \coordinate (sv2) at ({1.8+\radius*cos(150)}, {-0.525+\radius*sin(150)});
+    \coordinate (sv3) at ({2.5+\radius*cos(160)}, {0+\radius*sin(160)});
+    % Support vector label
+    \node[anchor=east] at (-3.5, -0.2) {{\SansFont{support vectors}}};
+    \draw[darkgrey, thick, -{Stealth[round]}] (-3.5, -0.2) to[out=10, in=190] (-1.7, 0) to[out=10, in=260] (sv1);
+    \draw[darkgrey, thick, -{Stealth[round]}] (-3.5, -0.2) to[out=10, in=190] (-1.7, 0) to[out=10, in=150] (sv2);
+    \draw[darkgrey, thick, -{Stealth[round]}] (-3.5, -0.2) to[out=10, in=190] (-1.7, 0) to[out=10, in=160] (sv3);
+    % Normal vector w
+    \draw[darkgrey, very thick, -{Triangle}] (1.8, 1.35) -- ++(-0.6, 0.8) node[black, midway, sloped, above] {\(\symbf{w}\)};
+\end{tikzpicture}
+\end{document}
