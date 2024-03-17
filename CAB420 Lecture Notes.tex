@@ -821,41 +821,6 @@ categorical data. There are two main types of classification:
     \item \textbf{Multiclass classification:} The response variable has more than
           \(N\) classes.
 \end{itemize}
-\subsection{Classification Metrics}
-In binary classification, the confusion matrix is a table that is used
-to describe the performance of a classification model. It has the
-following metrics:
-\begin{figure}[H]
-    \centering
-    \includegraphics[height = 5cm]{figures/confusion_matrix.pdf}
-    % \caption{} % \label{}
-\end{figure}
-The following metrics are used to assess the performance of binary
-classification models.
-\begin{table}[H]
-    \centering
-    \begin{tblr}
-        {hlines,colspec={|Q[c,m]|Q[c,m]|Q[l,m]|}, rowsep=2ex, colsep=2ex}
-        \textbf{Metric}    & \textbf{Formula}                                                                                                 & \textbf{Interpretation}               \\
-        Accuracy           & \(\displaystyle\frac{\mathrm{TP} + \mathrm{TN}}{\mathrm{TP} + \mathrm{TN} + \mathrm{FP} + \mathrm{FN}}\)         & Overall performance of model          \\
-        Precision          & \(\displaystyle\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FP}} \)                                                  & Accuracy of positive predictions      \\
-        Recall Sensitivity & \(\displaystyle\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FN}}\)                                                   & Coverage of actual positive samples   \\
-        Sensitivity        & \(\displaystyle\frac{\mathrm{TN}}{\mathrm{TN} + \mathrm{FP}}\)                                                   & Coverage of actual negative samples   \\
-        F1 Score           & \(\displaystyle\frac{2 \times \mathrm{Precision} \times \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}\) & Harmonic mean of precision and recall \\
-    \end{tblr}
-    % \caption{} % \label{}
-\end{table}
-Compared to accuracy, precision and recall provide a more detailed
-analysis of how a model performs. Choosing the right metric depends on
-what is important for a problem:
-\begin{itemize}
-    \item If we wish to minimise false negatives: Use recall.
-    \item If we wish to minimise false positives: Use precision.
-    \item For overall performance: Use accuracy.
-\end{itemize}
-These metrics can also be generalised to multiclass classification by
-computing them for each class. Here we must consider datasets with class
-imbalance, as the metrics may be biased towards the majority class.
 \subsection{Support Vector Machines}
 Support Vector Machines (SVM) are a supervised learning model used for
 binary classification. The model works by finding a hyperplane that
@@ -877,19 +842,8 @@ hyperplane and the origin is given by \(\abs*{b} / \norm*{\symbf{w}}\).
 \subsubsection{Hard Margin SVM}
 If a dataset is linearly separable, we can select two parallel
 hyperplanes that separate the classes, such that the distance between
-them is maximised.
-% Given a normalised or standardised dataset, these hyperplanes can be
-% described by
-% \begin{equation*}
-%     \symbf{w}^\top \symbf{x} - b = +1
-% \end{equation*}
-% such that all points on and above this hyperplane are of class \({+}1\), and
-% \begin{equation*}
-%     \symbf{w}^\top \symbf{x} - b = {-}1
-% \end{equation*}
-% such that all points on and below this hyperplane are of class \({-}1\).
-We start by defining the \textbf{functional margin} of a point
-\(\symbf{x}^{\left( i \right)}\) as
+them is maximised.We start by defining the \textbf{functional margin}
+of a point \(\symbf{x}^{\left( i \right)}\) as
 \begin{equation*}
     \hat{\gamma}^{\left( i \right)} = y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right)
 \end{equation*}
@@ -937,8 +891,8 @@ is \({-}1\), we find:
 \end{gather*}
 We can then pose the following optimisation problem:
 \begin{align*}
-    \max_{\hat{\gamma},\: \symbf{w},\: b} \quad & \frac{\hat{\gamma}}{\norm*{\symbf{w}}}                                                                                                                                                          \\
-    \text{subject to} \quad     & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant \hat{\gamma}, \quad \forall i = 1,\: \dots,\: n
+    \max_{\hat{\gamma},\: \symbf{w},\: b} \quad & \frac{\hat{\gamma}}{\norm*{\symbf{w}}}                                                                                                \\
+    \text{subject to} \quad                     & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant \hat{\gamma}, \quad i = 1,\: \dots,\: n
 \end{align*}
 This is a non-convex problem, as the objective function contains the
 nonlinear term \(\norm*{\symbf{w}}\). If we impose the constraint
@@ -949,8 +903,8 @@ and note that maximising \(\hat{\gamma} / \norm*{\symbf{w}} = 1 / \norm*{\symbf{
 is the same as minimising \(\norm*{\symbf{w}}^2\), we can solve the
 equivalent problem:
 \begin{align*}
-    \min_{\symbf{w},\: b} \quad & \frac{1}{2}\norm*{\symbf{w}}^2                                                                                                                                                          \\
-    \text{subject to} \quad     & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant 1, \quad \forall i = 1,\: \dots,\: n.
+    \min_{\symbf{w},\: b} \quad & \frac{1}{2}\norm*{\symbf{w}}^2                                                                                              \\
+    \text{subject to} \quad     & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant 1, \quad i = 1,\: \dots,\: n.
 \end{align*}
 This is an optimisation problem with a convex quadratic objective
 function and linear constraints whose solution gives us the
@@ -963,33 +917,317 @@ geometric interpretation of the optimal margin classifier:
 \end{figure}
 The \textbf{decision boundary} is completely determined by the points
 that lie nearest to it. These points are called \textbf{support vectors}.
-\subsubsection{Soft Margin SVM}
-The derivation of the SVM assumes that a dataset is linearly separable,
-however we cannot guarantee this will always be the case. Additionally,
-outliers in the dataset can cause the optimal margin classifier to
-change dramatically, and produce a much smaller margin. To allow this
-algorithm to work with non-linearly separable datasets, and also be
-less sensitive to outliers, we will reformulate our optimisation
-problem using a slack variable \(\xi^{\left( i \right)}\) for each
-point \(\symbf{x}^{\left( i \right)}\):
+\subsubsection{The Dual Problem}
+We can reformulate the optimisation problem for the optimal margin
+classifier using \textbf{Lagrange multipliers}:
 \begin{align*}
-    \min_{\symbf{w},\: b,\: \xi} \quad & \frac{1}{2}\norm*{\symbf{w}}^2 + C \sum_{i = 1}^n \xi^{\left( i \right)}                                                                                     \\
-    \text{subject to} \quad             & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant 1 - \xi^{\left( i \right)}, \quad \forall i = 1,\: \dots,\: n \\
-                                        & \xi^{\left( i \right)} \geqslant 0, \quad \forall i = 1,\: \dots,\: n
+    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha_i \left( 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \right)       \\
+                                                               & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha_i \left( 1 - y^{\left( i \right)} \symbf{w}^\top \symbf{x}^{\left( i \right)} + y^{\left( i \right)} b \right)
 \end{align*}
-Modifying the first constraint now allows points to be misclassified
-with a penalty \(C \xi^{\left( i \right)}\). The hyperparameter \(C\) is
-a regularisation parameter that controls the trade-off between the
-margin and the slack variables.
-\begin{itemize}
-    \item A small value of \(C\) will penalise misclassifications less,
-         and result in a larger margin.
-    \item A large value of \(C\) will penalise misclassifications more,
-         and result in a smaller margin.
-\end{itemize}
-\(C = \infty\) is equivalent to the hard margin SVM.
+where \(\symbf{\alpha} = \left( \alpha_1,\: \dots,\: \alpha_n \right)\)
+is a vector of Lagrange multipliers. The \textbf{dual problem} is then
+given by:
+\begin{align*}
+    \max_{\symbf{\alpha}} \quad & \min_{\symbf{w},\: b} \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) \\
+    \text{subject to} \quad     & \alpha_i \geqslant 0, \quad i = 1,\: \dots,\: n                                  \\
+                                & \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{\symbf{w}} = 0  \\
+                                & \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{b} = 0.
+\end{align*}
+The two partial derivatives are given by:
+\begin{align*}
+    \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{\symbf{w}} & = \symbf{w} - \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} = \symbf{0} \quad \implies \quad \symbf{w} = \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} \\
+    \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{b}         & = \sum_{i = 1}^n \alpha_i y^{\left( i \right)} = 0.
+\end{align*}
+The Lagrangian then simplifies to:
+\begin{align*}
+    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha_i \left( 1 - y^{\left( i \right)} \symbf{w}^\top \symbf{x}^{\left( i \right)} + y^{\left( i \right)} b \right)                                                      \\
+                                                               & =
+    \begin{aligned}[t]
+         & \frac{1}{2} \left( \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)^\top \left( \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)                                                               \\
+         & + \sum_{i = 1}^n \alpha_i - \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} + b \sum_{i = 1}^n \alpha_i y^{\left( i \right)}
+    \end{aligned}
+    \\
+                                                               & = \sum_{i = 1}^n \alpha_i - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}}.
+\end{align*}
+Therefore, in this form, we find that our problem only depends on the
+inner product of points in the dataset:
+\begin{align*}
+    \max_{\symbf{\alpha}} \quad & \sum_{i = 1}^n \alpha_i - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} \\
+    \text{subject to} \quad     & \alpha_i \geqslant 0, \quad i = 1,\: \dots,\: n                                                                                                                                                                           \\
+                                & \sum_{i = 1}^n \alpha_i y^{\left( i \right)} = 0.
+\end{align*}
+By examining the dual form of the optimisation problem, we can see that
+our algorithm is in terms of inner products between input vectors. This
+will be important when we consider kernel methods in the next section.
+\subsubsection{Kernel Methods}
+Consider a dataset where a linear model is not sufficient. We can
+transform the input vectors \(\symbf{x}\) into a higher-dimensional
+space using the \textbf{feature map} \(\phi: \R^p \to \R^d\) such that
+\begin{equation*}
+    \symbf{x} \mapsto \phi\left( \symbf{x} \right).
+\end{equation*}
+Let us define a \textbf{kernel function} corresponding to the
+feature map \(\phi\) as a function \(K: \R^p \times \R^p \to \R\) which
+satisfies:
+\begin{equation*}
+    K\left( \symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)} \right) = \abracket*{\phi\left( \symbf{x}^{\left( i \right)} \right),\: \phi\left( \symbf{x}^{\left( j \right)} \right)}_V.
+\end{equation*}
+\(K\) is a symmetric positive semi-definite kernel because it satisfies
+Mercer's theorem, that is,
+\begin{equation*}
+    \sum_{i = 1}^p \sum_{j = 1}^p c_i c_j K\left( \symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)} \right) \geqslant 0.
+\end{equation*}
+Alternatively, we can construct the Gram matrix \(\symbf{K}\) where
+\(\symbf{K}_{ij} = K\left( \symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)} \right)\),
+demonstrating that \(\symbf{K}\) is positive semi-definite.
 
-\newpage
+Our goal is then to find a method to compute the inner product
+\(\abracket*{\phi\left( \symbf{x}^{\left( i \right)} \right),\:
+\phi\left( \symbf{x}^{\left( j \right)} \right)}_V\) without explicitly
+computing \(\phi\), so that we can replace all inner products involving
+the input vector with the kernel function \(K\). This allows us to work
+with \(\phi\), which can be infinite in dimension, without knowing its
+explicit form.
+
+This is the idea behind the \textbf{kernel trick}, which allows us to
+solve the dual form of the optimisation problem using a kernel
+function.
+\subsubsection{Common Kernels}
+In this section, we will use the symbols \(\symbf{x}\) and
+\(\symbf{z}\) to represent input vectors \(\symbf{x}^{\left( i
+\right)}\) and \(\symbf{x}^{\left( j \right)}\) for brevity.
+
+Consider the function \(K\left( \symbf{x},\: \symbf{z} \right) =
+\symbf{x}^\top \symbf{z}\). Through some algebraic manipulation, we can
+show that this is a valid kernel function:
+\begin{align*}
+    K\left( \symbf{x},\: \symbf{z} \right) & = \symbf{x}^\top \symbf{z}              \\
+                                           & = \abracket*{\symbf{x},\: \symbf{z}}_V.
+\end{align*}
+This forms our first trivial kernel function, the \textbf{linear kernel},
+where \(\phi\left( \symbf{x} \right) = \symbf{x}\).
+Now consider the kernel function \(K\left( \symbf{x},\: \symbf{z}
+\right) = f\left( \symbf{x} \right) f\left( \symbf{z} \right)\), for
+some function \(f: \R^p \to \R\). We can show that this is also a valid
+kernel function by letting \(\phi\left( \symbf{x} \right) = f\left( \symbf{x} \right)\):
+\begin{align*}
+    K\left( \symbf{x},\: \symbf{z} \right) & = f\left( \symbf{x} \right) f\left( \symbf{z} \right)                   \\
+                                           & = \abracket*{f\left( \symbf{x} \right),\: f\left( \symbf{z} \right)}_V.
+\end{align*}
+Let \(K_1\) and \(K_2\) be valid kernel functions, and let
+\(\alpha_1, \alpha_2 \geqslant 0\), then, the following transformations
+also produce valid kernel functions:
+\begin{itemize}
+    \item Scalar multiplication: \(K\left( \symbf{x},\: \symbf{z}
+          \right) = \alpha K_1\left( \symbf{x},\: \symbf{z} \right)\).
+    \item Adding a constant: \(K\left( \symbf{x},\: \symbf{z} \right) =
+          K_1\left( \symbf{x},\: \symbf{z} \right) + \alpha\).
+    \item Linear combination: \(K\left( \symbf{x},\: \symbf{z} \right)
+          = \alpha_1 K_1\left( \symbf{x},\: \symbf{z} \right) +
+          \alpha_2 K_2\left( \symbf{x},\: \symbf{z} \right)\).
+    \item Element-wise product: \(K\left( \symbf{x},\: \symbf{z}
+          \right) = K_1\left( \symbf{x},\: \symbf{z} \right) K_2\left(
+          \symbf{x},\: \symbf{z} \right)\).
+    \item Polynomial map: \(K\left( \symbf{x},\: \symbf{z} \right) =
+          P_d\left( K_1\left( \symbf{x},\: \symbf{z} \right) \right)\)
+          where \(P_d\) is a polynomial of degree \(d\) with positive
+          coefficients.
+    \item Exponential map: \(K\left( \symbf{x},\: \symbf{z} \right) =
+          \exp{\left( K_1\left( \symbf{x},\: \symbf{z} \right)
+          \right)}\).
+\end{itemize}
+These transformations allow us to construct a wide variety of kernel
+functions that satisfy the conditions defined above. Some common kernel
+functions are:
+\begin{itemize}
+    \item Polynomial kernel: \(K\left( \symbf{x},\: \symbf{z} \right) =
+          {\left( \gamma \symbf{x}^\top \symbf{z} + r \right)}^d\) for
+          \(d \in \N\).
+    \item Gaussian kernel: \(K\left( \symbf{x},\: \symbf{z} \right) =
+          \exp{\left( -\gamma \norm*{\symbf{x} - \symbf{z}}^2
+          \right)}\).
+    \item Sigmoid kernel: \(K\left( \symbf{x},\: \symbf{z} \right) =
+          \tanh{\left( \gamma \symbf{x}^\top \symbf{z} + r \right)}\).
+\end{itemize}
+where \(\gamma\) controls the influence of each training example on the
+decision boundary, and \(r\) is a bias term.
+
+The choice of kernel is problem dependent, but generally, points that
+are similar should produce a large value of \(K\), and points that are
+dissimilar should produce a small value of \(K\).
+
+A good starting point is the linear kernel, which allows us to
+visualise the decision boundary and understand the problem. If this
+kernel does not perform well, the Gaussian kernel should be used, as it
+only has one hyperparameter that needs to be tuned.
+\begin{itemize}
+    \item A small value of \(\gamma\) extends influence of a point and
+          leads to a smooth decision boundary.
+    \item A large value of \(\gamma\) results in a more complex
+          decision boundary. This can lead to overfitting.
+\end{itemize}
+The polynomial kernel is often more difficult to tune, as the degree of
+the polynomial can have a large effect on the decision boundary and the
+sigmoid kernel should only be used in specific cases.
+\subsubsection{Soft Margin SVM}
+Our discussion so far has only considered a linearly separable dataset.
+When a dataset is not linearly separable, the optimal margin classifier
+algorithm may fail to converge or return a suboptimal solution. This is
+due to the fact that the optimal margin classifier is sensitive to
+outliers, and may not generalise well to new data.
+
+To prevent this, we will introduce the \textbf{slack variable}
+\(\xi^{\left( i \right)}\) for each point \(\symbf{x}^{\left( i
+\right)}\), and reformulate the dual problem as follows:
+\begin{align*}
+    \min_{\symbf{w},\: b,\: \xi} \quad & \frac{1}{2}\norm*{\symbf{w}}^2 + C \sum_{i = 1}^n \xi^{\left( i \right)}                                                                            \\
+    \text{subject to} \quad            & y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \geqslant 1 - \xi^{\left( i \right)}, \quad i = 1,\: \dots,\: n \\
+                                       & \xi^{\left( i \right)} \geqslant 0, \quad i = 1,\: \dots,\: n
+\end{align*}
+This modification now allows points to be misclassified with a penalty
+\(C \xi^{\left( i \right)}\). \(C\) is a regularisation parameter
+(sometimes called a box constraint) that controls the trade-off
+between the margin and the slack variables.
+\begin{itemize}
+    \item A small value of \(C\) will penalise misclassifications less
+          and produce a wider margin.
+    \item A large value of \(C\) will penalise misclassifications more
+          and produce a smaller margin.
+\end{itemize}
+\(C = \infty\) is equivalent to the hard margin SVM, as it forces
+\(\xi^{\left( i \right)} = 0\) for all \(i\).
+\subsection{K-Nearest Neighbours}
+The \(k\)-nearest neighbours (\(k\)-NN) algorithm is a simple
+classification algorithm that classifies a point based on the majority
+class of its \(k\) nearest neighbours. The algorithm is non-parametric,
+meaning that it does not make any assumptions about the underlying
+distribution of the data. In this algorithm:
+\begin{itemize}
+    \item The training stage only consists of storing the feature
+          vectors and their corresponding class labels.
+    \item The testing stage then finds the \(k\) nearest neighbours of
+          a given point and assigns it the majority class of those
+          neighbours.
+\end{itemize}
+When classifying a point in the test set, we must choose an appropriate
+number of neighbours \(k\).
+\begin{itemize}
+    \item A small value of \(k\) may lead to poor performance on noisy
+          data, as it will be sensitive to outliers.
+    \item A large value of \(k\) may lead to misclassification when
+          points are close to the decision boundary, or when classes
+          are imbalanced.
+\end{itemize}
+The distance metric used to find the nearest neighbour is problem
+dependent, but the following are common choices:
+\begin{itemize}
+    \item \textbf{Manhattan distance:} \(\norm*{\symbf{x}^{\left( i \right)} - \symbf{x}}_1\).
+    \item \textbf{Euclidean distance:} \(\norm*{\symbf{x}^{\left( i \right)} - \symbf{x}}_2\).
+    \item \textbf{Minkowski distance:} \(\norm*{\symbf{x}^{\left( i \right)} - \symbf{x}}_p\) for \(p \in \N\).
+    \item \textbf{Cosine similarity distance:} \(1 - \frac{\symbf{x}^\top \symbf{z}}{\norm*{\symbf{x}}_2 \norm*{\symbf{z}}_2}\) measures the angle between vectors.
+    \item \textbf{Mahalanobis distance:} \(\sqrt{{\left( \symbf{x}^{\left( i \right)} - \symbf{x} \right)}^\top \symbf{S}^{-1} \left( \symbf{x}^{\left( i \right)} - \symbf{x} \right)}\) assumes \(\symbf{x}\) are distributed according to some distribution, with covariance matrix \(\symbf{S}\).
+    \item \textbf{Hamming distance:} Used for binary data, it counts the number of positions at which corresponding symbols are different.
+\end{itemize}
+\subsection{Random Forest}
+A random forest is an ensemble learning method that is used for both
+classification and regression that constructs multiple decision trees
+at training time to predict an examples class. In classification tasks,
+the output of the random tree is the class selected by the most trees.
+It's aim is to produce a diverse set of trees that are uncorrelated,
+and therefore, when combined, produce a more accurate prediction than
+any individual tree.
+\subsubsection{Decision Trees}
+Decision trees are a classical learning method that iteratively split
+data based on some criterion. Decision trees consists of two types of
+nodes:
+\begin{itemize}
+    \item \textbf{Decision nodes:} Represent a decision that splits data entering that node.
+    \item \textbf{End nodes:} Represent a class label with some probability.
+\end{itemize}
+A tree is constructed using the entire training set, until one of the
+following conditions are met:
+\begin{itemize}
+    \item The tree reaches a maximum depth.
+    \item The previous decision splits the data into classes that are
+          pure, or nearly pure (i.e., consisting of a single class).
+          This is determined by the \textbf{Gini impurity}.
+    \item The information gain from a split is below a certain
+          threshold.
+\end{itemize}
+\subsubsection{Random Forests}
+In the random forest algorithm, a number of decision trees are
+constructed using a random subset of the training data. This can be
+done in one of two ways:
+\begin{itemize}
+    \item \textbf{Bootstrap aggregation (bagging)}: Sampling with
+          replacement to create a new training set of the same size.
+          This is repeated \(B\) times to create \(B\) new training
+          sets, for \(B\) \textit{different} decision trees.
+    \item \textbf{Feature bagging}: Randomly select a subset of features
+          to use at each decision node. This is done to prevent a single
+          feature from dominating the decision.
+\end{itemize}
+The depth of the trees is used to control the complexity of the model
+and should be chosen carefully considering the number of examples in
+each class, to prevent class domination. Generally, increasing the tree
+depth also increases the risk of overfitting.
+\subsection{Multiclass Classification}
+Each of the above algorithms can be extended to multiclass
+classification using one of the following methods:
+\begin{itemize}
+    \item \textbf{One-vs-One}: Pair a class with another class, and
+          train a binary classifier for each pair. This results in
+          \(\frac{p \left( p + 1 \right)}{2}\) classifiers.
+    \item \textbf{One-vs-All}: Pair a class with all other classes, and
+          train a binary classifier for each group. This results in \(p\)
+          classifiers.
+\end{itemize}
+It is important to note that the one-vs-all method will suffer from class
+imbalance when the number of classes is large. In such cases, class
+weights can be used to counteract class imbalance, where weights are
+inversely proportional to the amount of data in a class.
+\subsection{Evaluating a Classification Model}
+The confusion matrix is a table that is used to describe the
+performance of a classification model. It has the form:
+\begin{figure}[H]
+    \centering
+    \includegraphics[height = 5cm]{figures/confusion_matrix.pdf}
+    % \caption{} % \label{}
+\end{figure}
+The following metrics are used to assess the performance of binary
+classification models.
+\begin{table}[H]
+    \centering
+    \begin{tblr}
+        {hlines,colspec={|Q[c,m]|Q[c,m]|Q[l,m]|}, rowsep=2ex, colsep=2ex}
+        \textbf{Metric}    & \textbf{Formula}                                                                                                 & \textbf{Interpretation}               \\
+        Accuracy           & \(\displaystyle\frac{\mathrm{TP} + \mathrm{TN}}{\mathrm{TP} + \mathrm{TN} + \mathrm{FP} + \mathrm{FN}}\)         & Overall performance of model          \\
+        Precision          & \(\displaystyle\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FP}} \)                                                  & Accuracy of positive predictions      \\
+        Recall Sensitivity & \(\displaystyle\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FN}}\)                                                   & Coverage of actual positive samples   \\
+        Sensitivity        & \(\displaystyle\frac{\mathrm{TN}}{\mathrm{TN} + \mathrm{FP}}\)                                                   & Coverage of actual negative samples   \\
+        F1 Score           & \(\displaystyle\frac{2 \times \mathrm{Precision} \times \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}\) & Harmonic mean of precision and recall \\
+    \end{tblr}
+    % \caption{} % \label{}
+\end{table}
+Compared to accuracy, precision and recall provide a more detailed
+analysis of how a model performs. Choosing the right metric depends on
+what is important for a problem:
+\begin{itemize}
+    \item If we wish to minimise false negatives: Use recall.
+    \item If we wish to minimise false positives: Use precision.
+    \item For overall performance: Use accuracy.
+\end{itemize}
+These metrics can also be generalised to multiclass classification by
+computing them for each class. Here we must consider datasets with class
+imbalance, as the metrics may be biased towards the majority class.
+\subsection{Model Selection}
+Deciding on which classification model to use can be difficult and vary
+from problem to problem. Ideally we want to perform an exhaustive
+search across a set of hyperparameters for multiple models, and
+selecting the model that performs best on a test set. This can be done
+using a grid search over all possible combinations, however this can be
+computationally expensive. Instead, we may use a random search to
+search a sparse grid, followed by a more fine-grained search. \newpage
 \begin{appendix}
     \section{Numerical Summaries of Data}\label{appendix:numerical-summaries}
     \subsection{Mean}
