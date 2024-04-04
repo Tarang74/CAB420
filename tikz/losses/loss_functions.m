@@ -1,6 +1,6 @@
 clear; close all; clc;
 
-h = 0.001;
+h = 0.01;
 
 zreal = -1:h:1; zreal(end) = [];
 zlog = -1:h:1; zlog(end) = [];
