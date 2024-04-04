@@ -1,0 +1,44 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usetikzlibrary{arrows.meta}
+
+\definecolor{pink}{RGB}{255,52,124}
+\definecolor{blue}{RGB}{50,205,255}
+\definecolor{green}{RGB}{67,243,150}
+\definecolor{darkgrey}{RGB}{48,48,48}
+
+\begin{document}
+\begin{tikzpicture}[draw=darkgrey]
+    % Axis
+    \draw[->, thick, -{Stealth[round]}] (-3,0) -- (3,0) node[label={[label distance=1]135:\(z\)}] {};
+    \draw[thick] (-2,-0.15) --++ (0,0.3);
+    \draw[thick] (2,-0.15) --++ (0,0.3);
+    \node[label=below:\(y \equal 0\)] at (-2, 0) {};
+    \node[label=below:\(1\)] at (2, 0) {};
+    \begin{axis}[
+        axis x line=none,
+        axis y line=none,
+        anchor=origin,
+        axis line style={draw=none},
+        xtick=\empty,
+        xmin=-0.6,
+        xmax=0.6,
+        ymin=-0.1,
+        ymax=0.7,
+        ytick=\empty,
+        x=4cm,
+        y=4cm
+    ]
+        \addplot[color=blue,line width=2pt,opacity=0.9] table [x=z, y=crossentropy0, col sep=comma] {tikz/losses/crossentropy.csv};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

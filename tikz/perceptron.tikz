@@ -1,0 +1,56 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{fontspec}
+
+\newfontfamily\Sans{Montserrat SemiBold}
+
+\newcommand{\SansFont}[1]
+{%
+    \Sans%
+    \fontsize{12pt}{12pt}\selectfont%
+    #1
+}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usepackage{mathtools}
+
+\usetikzlibrary{arrows.meta}
+
+\definecolor{pink}{RGB}{255,52,124}
+\definecolor{blue}{RGB}{50,205,255}
+\definecolor{green}{RGB}{67,243,150}
+\definecolor{darkgrey}{RGB}{48,48,48}
+
+\begin{document}
+\begin{tikzpicture}[draw=darkgrey]
+    % Inputs
+    \draw (0, 1.5)  node[label=center:{\(x_1^{\left( i \right)}\)}] (in1label) {};
+    \draw (0, 0)    node[label=center:{\(\vdotswithin{x_1^{\left( i \right)}}\)}] (in2label) {};
+    \draw (0, -1.5) node[label=center:{\(x_p^{\left( i \right)}\)}] (in3label) {};
+    \draw[thick, fill=green] (in1label) ++ (2, 0) circle (0.2) node (in1) {};
+    \draw[thick, fill=green] (in2label) ++ (2, 0) node[label=center:\(\vdots\)] (in2) {};
+    \draw[thick, fill=green] (in3label) ++ (2, 0) circle (0.2) node (in3) {};
+    % Output
+    \draw[thick, fill=pink] (4, 0) circle (0.2) node[label={[above, label distance=2]:{\(a\)}}] (out) {};
+    \node[label=center:{\(\hat{y}^{\left( i \right)}\)}] (outlabel) at (6, 0) {};
+    % Edges
+    % x to input nodes
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in1label) -- (in1.center);
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in2label) -- (in2.center);
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in3label) -- (in3.center);
+    % input nodes to output
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in1.center) -- (out.center) node[midway, above, sloped] {\(w_1\)};
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in2.center) -- (out.center);
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in3.center) -- (out.center) node[midway, above, sloped] {\(w_p\)};
+    % output to y
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (out.center) -- (outlabel);
+\end{tikzpicture}
+\end{document}

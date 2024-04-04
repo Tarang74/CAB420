@@ -1,0 +1,97 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{fontspec}
+
+\newfontfamily\Sans{Montserrat SemiBold}
+
+\newcommand{\SansFont}[1]
+{%
+    \Sans%
+    \fontsize{12pt}{12pt}\selectfont%
+    #1
+}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usepackage{mathtools}
+
+\usetikzlibrary{arrows.meta}
+
+\definecolor{pink}{RGB}{255,52,124}
+\definecolor{blue}{RGB}{50,205,255}
+\definecolor{green}{RGB}{67,243,150}
+\definecolor{darkgrey}{RGB}{48,48,48}
+
+\begin{document}
+\begin{tikzpicture}[draw=darkgrey]
+    % Inputs
+    \draw (0, 1.5)  node[label=center:{\(x_1^{\left( i \right)}\)}] (in1label) {};
+    \draw (0, 0)    node[label=center:{\(\vdotswithin{x_1^{\left( i \right)}}\)}] (in2label) {};
+    \draw (0, -1.5) node[label=center:{\(x_p^{\left( i \right)}\)}] (in3label) {};
+    \draw[thick, fill=green] (in1label) ++ (2, 0) circle (0.2) node (in1) {};
+    \draw[thick, fill=green] (in2label) ++ (2, 0) node[label=center:\(\vdots\)] (in2) {};
+    \draw[thick, fill=green] (in3label) ++ (2, 0) circle (0.2) node (in3) {};
+    % Multi-Layer Perceptron
+    % Layer 1
+    \draw[thick, fill=blue] (4, 2.25) circle (0.2) node[label={[above, label distance=2]:{\(a_1^{\left[ 1 \right]}\)}}] (hidden11) {};
+    \draw[thick, fill=blue] (4, 0.75) circle (0.2) node[label={[above, label distance=2]:{\(a_2^{\left[ 1 \right]}\)}}] (hidden12) {};
+    \draw[thick, fill=blue] (4, -0.75) circle (0.2) node[label={[above, label distance=2]:{\(a_3^{\left[ 1 \right]}\)}}] (hidden13) {};
+    \draw[thick, fill=blue] (4, -2.25) circle (0.2) node[label={[above, label distance=2]:{\(a_4^{\left[ 1 \right]}\)}}] (hidden14) {};
+    % Layer 2
+    \draw[thick, fill=blue] (6, 1.5) circle (0.2) node[label={[above, label distance=2]:{\(a_1^{\left[ 2 \right]}\)}}] (hidden21) {};
+    \draw[thick, fill=blue] (6, 0) circle (0.2) node[label={[above, label distance=2]:{\(a_2^{\left[ 2 \right]}\)}}] (hidden22) {};
+    \draw[thick, fill=blue] (6, -1.5) circle (0.2) node[label={[above, label distance=2]:{\(a_3^{\left[ 2 \right]}\)}}] (hidden23) {};
+    % Layer 3 (dots)
+    \draw (8, 0) node[label=center:{\(\cdots\)}] (hidden3) {};
+    % Outputs
+    \draw[thick, fill=pink] (10, 1.5) circle (0.2) node[label={[above, label distance=2]:{\(a_1^{\left[ L \right]}\)}}] (out1) {};
+    \draw[thick, fill=pink] (10, 0) node[label={center:{\(\vdotswithin{a_1^{\left[ L \right]}}\)}}] (out2) {};
+    \draw[thick, fill=pink] (10, -1.5) circle (0.2) node[label={[above, label distance=2]:{\(a_K^{\left[ L \right]}\)}}] (out3) {};
+    \node[label=center:{\(\hat{y}_1^{\left( i \right)}\)}] (outlabel1) at (12, 1.5) {};
+    \node[label=center:{\(\vdotswithin{\hat{y}_1^{\left( i \right)}}\)}] (outlabel2) at (12, 0) {};
+    \node[label=center:{\(\hat{y}_K^{\left( i \right)}\)}] (outlabel3) at (12, -1.5) {};
+    % Edges
+    % x to input nodes
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in1label) -- (in1.center);
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in2label) -- (in2.center);
+    \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in3label) -- (in3.center);
+    % input nodes to layer 1
+    \foreach \i in {1,2,3}
+    {
+        \foreach \j in {1,2,3,4}
+        {
+            \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (in\i.center) -- (hidden1\j);
+        }
+    }
+    % layer 1 to layer 2
+    \foreach \i in {1,2,3,4}
+    {
+        \foreach \j in {1,2,3}
+        {
+            \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (hidden1\i) -- (hidden2\j);
+        }
+    }
+    % layer 2 to layer 3 (dots)
+    \foreach \i in {1,2,3}
+    {
+        \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (hidden2\i) -- (hidden3);
+    }
+    % layer 3 to outputs
+    \foreach \i in {1,2,3}
+    {
+        \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (hidden3) -- (out\i);
+    }
+    % outputs to ys
+    \foreach \i in {1,2,3}
+    {
+        \draw[->, thick, -{Stealth[round]}, shorten <= 10, shorten >= 10] (out\i) -- (outlabel\i);
+    }
+\end{tikzpicture}
+\end{document}

@@ -8,6 +8,7 @@
 \DeclareMathOperator{\sgn}{sgn}
 \usepackage{subcaption}
 \usepackage{tabularray}
+\usepackage{mdframed}
 
 % Header and footer
 \newcommand{\unitName}{Machine Learning}
@@ -29,6 +30,13 @@
 ]{doclicense}
 
 \date{}
+
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
 
 \begin{document}
 %
@@ -255,27 +263,23 @@ perfectly and therefore, we will assume the relationship:
 where \(\hat{y}\) is known as the \textbf{hypothesis function} which
 \textbf{predicts} value of \(y\), and \(\hat{\beta}_0\) and
 \(\hat{\beta}_1\) are the \textbf{estimated} values of the
-\textbf{parameters} \(\beta_0\) and \(\beta_1\), respectively. This
-model adds a \textbf{residual} term \(\epsilon\) to account for the
-error in each observation:
+\textbf{parameters} \(\beta_0\) and \(\beta_1\), respectively.
+\subsection{The Loss Function}
+Consider a \textbf{residual} term \(\epsilon\) to account for the error
+in each observation:
 \begin{align*}
     y^{\left( i \right)} & = \hat{y}\left( x^{\left( i \right)} \right) + \epsilon^{\left( i \right)}         \\
                          & = \hat{\beta}_0 + \hat{\beta}_1 x^{\left( i \right)} + \epsilon^{\left( i \right)}
 \end{align*}
-here \(\epsilon\) is assumed to be normally distributed with zero mean
-and \(\sigma^2\) variance:
+where \(\epsilon\) is assumed to be normally distributed with zero mean
+and \(\sigma^2\) variance\footnote{Note that as \(y\) depends on \(\epsilon\), we can also show that \(y \sim \mathrm{N}\left( \beta_0 + \beta_1 x,\: \sigma^2 \right)\) where \(y\) is normally distributed for fixed values of \(x\).}:
 \begin{equation*}
     \epsilon \overset{\mathrm{iid}}{\sim} \mathrm{N}\left( 0,\: \sigma^2 \right).
 \end{equation*}
-As \(y\) depends on \(\epsilon\), we can also show that
-\begin{equation*}
-    y \sim \mathrm{N}\left( \beta_0 + \beta_1 x,\: \sigma^2 \right)
-\end{equation*}
-where \(y\) is normally distributed for fixed values of \(x\).
 The values of \(\hat{\beta}_0\) and \(\hat{\beta}_1\) arise when we
-consider the \textbf{loss function}:
+consider the \textbf{loss function}\footnote{To see how this loss function is derived, see \hyperref[section:linear-regression-probabilistic-interpretation]{Section~\ref*{section:linear-regression-probabilistic-interpretation}}}:
 \begin{equation*}
-    L\left( \symbf{\beta} \right) = \frac{1}{2} \epsilon^2 = \frac{1}{2} {\left( y - \hat{y} \right)}^2 = \frac{1}{2} {\left( y - \left( \beta_0 + \beta_1 x \right) \right)}^2.
+    L\left( \symbf{\beta} \right) = \frac{1}{2} \epsilon^2 = \frac{1}{2} {\left( y - \hat{y} \right)}^2 = \frac{1}{2} {\left( y - \left( \beta_0 + \beta_1 x \right) \right)}^2
 \end{equation*}
 which we wish to minimise. As these estimators apply to the entire
 training set, we will consider the \textbf{cost function}:
@@ -388,6 +392,55 @@ This implies that the optimal parameters \(\symbf{\beta}\) are given by:
     \symbf{X}^\top \symbf{X} \symbf{\beta}                            & = \symbf{X}^\top \symbf{y}                                                 \\
     \symbf{\beta}                                                     & = {\left( \symbf{X}^\top \symbf{X} \right)}^{-1} \symbf{X}^\top \symbf{y}.
 \end{align*}
+These are known as the \textbf{normal equations}, and they provide the
+optimal parameters \(\hat{\symbf{\beta}}\) that minimise the cost
+function \(J\left( \symbf{\beta} \right)\).
+\subsection{Probabilistic Interpretation}\label{section:linear-regression-probabilistic-interpretation}
+To understand why we use the loss function \(L\left( \symbf{\beta}
+\right)\), consider the probability density function of the residuals
+\(\epsilon\):
+\begin{equation*}
+    p\left( \epsilon^{\left( i \right)} \right) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left( -\frac{{\epsilon^{\left( i \right)}}^2}{2 \sigma^2} \right),
+\end{equation*}
+which implies
+\begin{equation*}
+    p\left( y^{\left( i \right)} \mid \symbf{x}^{\left( i \right)}; \symbf{\beta} \right) = \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left( -\frac{{\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2}{2 \sigma^2} \right).
+\end{equation*}
+where the probability is conditioned on the input \(\symbf{x}\) and
+parametrised by \(\symbf{\beta}\). If we treat this as a function of
+\(\symbf{\beta}\), we can use the \textbf{likelihood function} \(\mathcal{L}\) to
+consider the probability of observing a response \(y\) given an input
+\(\symbf{x}\)
+\begin{equation*}
+    \mathcal{L}\left( \symbf{\beta} \right) = p\left( \symbf{y} \mid \symbf{X} ;\: \symbf{\beta} \right)
+\end{equation*}
+which we wish to maximise. As we assume all residuals to be
+independently distributed, we can take the product of all observations:
+\begin{equation*}
+    \mathcal{L}\left( \symbf{\beta} \right) = \prod_{i = 1}^n p\left( y^{\left( i \right)} \mid \symbf{x}^{\left( i \right)}; \symbf{\beta} \right) = \prod_{i = 1}^n \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left( -\frac{{\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2}{2 \sigma^2} \right).
+\end{equation*}
+Now, rather than maximising the likelihood function, we can also
+maximise any monotonically increasing function of \(\mathcal{L}\), to simplify
+our calculations. Let us consider the \textbf{log-likelihood} function
+\(\ell\):
+\begin{align*}
+    \ell\left( \symbf{\beta} \right) & = \ln{\mathcal{L}\left( \symbf{\beta} \right)}                                                                                                                                                                                  \\
+                                     & = \ln{\left[ \prod_{i = 1}^n \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left( -\frac{{\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2}{2 \sigma^2} \right) \right]}                          \\
+                                     & = \sum_{i = 1}^n \ln{\left[ \frac{1}{\sqrt{2 \pi \sigma^2}} \exp\left( -\frac{{\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2}{2 \sigma^2} \right) \right]}                           \\
+                                     & = \sum_{i = 1}^n \ln{\left[ \frac{1}{\sqrt{2 \pi \sigma^2}} \right]} - \sum_{i = 1}^n \frac{{\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2}{2 \sigma^2}                              \\
+                                     & = -\frac{n}{2} \ln{\left( 2 \pi \sigma^2 \right)} - \frac{1}{\sigma^2} \sum_{i = 1}^n \frac{1}{2} {\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2                                     \\
+                                     & = - \frac{n}{\sigma^2} \left[ \frac{\sigma^2}{2} \ln{\left( 2 \pi \sigma^2 \right)} + \frac{1}{n} \sum_{i = 1}^n \frac{1}{2} {\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2 \right].
+\end{align*}
+Hence, maximising \(\ell\left( \symbf{\beta} \right)\) is equivalent to
+minimising the cost function \(J\left( \symbf{\beta} \right)\),
+\begin{equation*}
+    J\left( \symbf{\beta} \right) = \frac{1}{n} \sum_{i = 1}^n \frac{1}{2} {\left( y^{\left( i \right)} - \symbf{\beta}^\top \symbf{x}^{\left( i \right)} \right)}^2
+\end{equation*}
+from which we can define the loss function \(L\left( \symbf{\beta} \right)\):
+\begin{equation*}
+    L\left( \symbf{\beta} \right) = \frac{1}{2} {\left( y - \symbf{\beta}^\top \symbf{x} \right)}^2.
+\end{equation*}
+This technique is known as \textbf{maximum likelihood estimation}.
 \subsection{Assumptions of Linear Regression}
 There are several assumptions that must be satisfied for linear
 regression to be valid:
@@ -471,7 +524,7 @@ a linear regression model:
         \textbf{Model:}            & OLS           & \textbf{Adj. R-squared:}     & \(\bar{R}^2\)                                            \\
         \textbf{Method:}           & Least Squares & \textbf{F-statistic:}        & \(F_{\mathrm{test}}\)                                    \\
         \textbf{Date:}             & Date          & \textbf{Prob (F-statistic):} & \(\Pr{\left( F_{p, n - p} > F_{\mathrm{test}} \right)}\) \\
-        \textbf{Time:}             & Time          & \textbf{Log-Likelihood:}     & \(\ln{\left( \hat{L} \right)}\)                          \\
+        \textbf{Time:}             & Time          & \textbf{Log-Likelihood:}     & \(\ln{\left( \mathcal{L} \right)}\)                      \\
         \textbf{No. Observations:} & \(n\)         & \textbf{AIC:}                & AIC                                                      \\
         \textbf{Df Residuals:}     & \(n - p - 1\) & \textbf{BIC:}                & BIC                                                      \\
         \textbf{Df Model:}         & \(p\)         &                              &                                                          \\
@@ -544,19 +597,19 @@ The quantities in the regression results are described below:
           that the model is statistically insignificant. A value less
           than 0.05 suggests that the model is statistically
           significant.
-    \item The \textbf{Log Likelihood} \(\ln{\left( \hat{L} \right)}\)
-          is a measure of how well the model fits the data.
+    \item The \textbf{Log Likelihood} \(\ln{\left( \mathcal{L}
+          \right)}\) is a measure of how well the model fits the data.
           \begin{equation*}
-              \ln{\left( \hat{L} \right)} = -\frac{n}{2} \log{\left( 2 \pi \right)} - \frac{n}{2} \log{\left( \frac{\mathrm{SSE}}{n} \right)} - \frac{n}{2}
+              \ln{\left( \mathcal{L} \right)} = -\frac{n}{2} \log{\left( 2 \pi \right)} - \frac{n}{2} \log{\left( \frac{\mathrm{SSE}}{n} \right)} - \frac{n}{2}
           \end{equation*}
-          where \(\hat{L}\) is the maximum value of the likelihood
+          where \(\mathcal{L}\) is the maximum value of the likelihood
           function for the model.
     \item The \textbf{Akaike Information Criterion} (AIC) and
           \textbf{Bayesian Information Criterion} (BIC) are used to
           compare models. They are given by:
           \begin{align*}
-              \mathrm{AIC} & = 2\left( p + 1 \right) - 2 \ln{\left( \hat{L} \right)}                      \\
-              \mathrm{BIC} & = \left( p + 1 \right) \ln{\left( n \right)} - 2 \ln{\left( \hat{L} \right)}
+              \mathrm{AIC} & = 2\left( p + 1 \right) - 2 \ln{\left( \mathcal{L} \right)}                      \\
+              \mathrm{BIC} & = \left( p + 1 \right) \ln{\left( n \right)} - 2 \ln{\left( \mathcal{L} \right)}
           \end{align*}
           Smaller values of AIC and BIC suggest a better model fit.
 \end{itemize}
@@ -818,9 +871,129 @@ Classification is a supervised learning task that predicts classes of
 categorical data. There are two main types of classification:
 \begin{itemize}
     \item \textbf{Binary classification:} The response variable has two classes.
-    \item \textbf{Multiclass classification:} The response variable has more than
-          \(N\) classes.
+    \item \textbf{Multiclass classification:} The response variable has \(K\) classes.
 \end{itemize}
+There are several algorithms that can be used to solve these
+classification problems, and we will discuss a few in the following
+sections.
+\subsection{Logistic Regression}
+Logistic regression is a classification algorithm that models the
+probability of a binary response variable. The model aims to predict
+the probability that a given observation belongs to a particular class
+by producing an output between 0 and 1. The model considers the
+\textbf{logistic} function (or \textbf{sigmoid} function) defined:
+\begin{equation*}
+    \sigma\left( z \right) = \frac{1}{1 + e^{-z}} = \frac{e^z}{1 + e^z}
+\end{equation*}
+where we use the variable \(z\) to represent a linear combination of
+the predictors:
+\begin{equation*}
+    z = \sum_{i = 1}^n \symbf{\beta}^\top \symbf{x} = \symbf{w}^\top \symbf{x} + b
+\end{equation*}
+where \(\symbf{w} = \left[ \beta_1,\: \dots,\: \beta_n \right]\) is a
+vector of \textbf{weights}, and \(b = \beta_0\) is the \textbf{bias} term.
+The model is then defined as:
+\begin{equation*}
+    \hat{y} = \sigma\left( z \right) = \sigma\left( \symbf{w}^\top \symbf{x} + b \right)
+\end{equation*}
+where we assume that the probability of \(y\) being equal to 1 is given
+by:
+\begin{equation*}
+    \Pr{\left( y = 1 \mid \symbf{x};\: \symbf{\beta} \right)} = \hat{y},
+\end{equation*}
+so that the probability of \(y\) being equal to 0 is given by:
+\begin{equation*}
+    \Pr{\left( y = 0 \mid \symbf{x};\: \symbf{\beta} \right)} = 1 - \hat{y},
+\end{equation*}
+both conditioned on the predictors \(\symbf{x}\).
+If we apply the method of maximum likelihood estimation to this model,
+we can derive a loss function for logistic regression. First let us
+construct a general expression for the probability of \(y\) given
+\(\symbf{x}\):
+\begin{equation*}
+    p\left( y^{\left( i \right)} \mid \symbf{x}^{\left( i \right)};\: \symbf{\beta} \right) = \hat{y}{\left( \symbf{x}^{\left( i \right)} \right)}^{y^{\left( i \right)}} {\left( 1 - \hat{y}\left( \symbf{x}^{\left( i \right)} \right) \right)}^{1 - y^{\left( i \right)}}
+\end{equation*}
+so that we can define the likelihood function as:
+\begin{equation*}
+    \mathcal{L}\left( \symbf{\beta} \right) = \prod_{i = 1}^n p\left( y^{\left( i \right)} \mid \symbf{x}^{\left( i \right)};\: \symbf{\beta} \right) = \prod_{i = 1}^n \hat{y}{\left( \symbf{x}^{\left( i \right)} \right)}^{y^{\left( i \right)}} {\left( 1 - \hat{y}\left( \symbf{x}^{\left( i \right)} \right) \right)}^{1 - y^{\left( i \right)}}.
+\end{equation*}
+Then let us take the logarithm of the likelihood function:
+\begin{align*}
+    \ell\left( \symbf{\beta} \right) & = \ln{\mathcal{L}\left( \symbf{\beta} \right)}                                                                                                                                                                                                           \\
+                                     & = \ln{\left[ \prod_{i = 1}^n \hat{y}{\left( \symbf{x}^{\left( i \right)} \right)}^{y^{\left( i \right)}} {\left( 1 - \hat{y}\left( \symbf{x}^{\left( i \right)} \right) \right)}^{1 - y^{\left( i \right)}} \right]}                                     \\
+                                     & = \sum_{i = 1}^n \ln{\left[ \hat{y}{\left( \symbf{x}^{\left( i \right)} \right)}^{y^{\left( i \right)}} {\left( 1 - \hat{y}\left( \symbf{x}^{\left( i \right)} \right) \right)}^{1 - y^{\left( i \right)}} \right]}                                      \\
+                                     & = \sum_{i = 1}^n \ln{\left[ \hat{y}{\left( \symbf{x}^{\left( i \right)} \right)}^{y^{\left( i \right)}} \right]} + \sum_{i = 1}^n \ln{\left[ {\left( 1 - \hat{y}\left( \symbf{x}^{\left( i \right)} \right) \right)}^{1 - y^{\left( i \right)}} \right]} \\
+                                     & = \sum_{i = 1}^n \left[ y^{\left( i \right)} \ln{\hat{y}\left( \symbf{x}^{\left( i \right)} \right)} + \left( 1 - y^{\left( i \right)} \right) \ln{\left( 1 - \hat{y}\left( \symbf{x}^{\left( i \right)} \right) \right)} \right].
+\end{align*}
+Therefore, to maximise the log-likelihood function, we will minimise
+negative log-likelihood function:
+\begin{equation*}
+    L\left( \symbf{\beta} \right) = -\Bigl[ y \ln{\hat{y}\left( \symbf{x} \right)} + \left( 1 - y \right) \ln{\left( 1 - \hat{y}\left( \symbf{x} \right) \right)} \Bigr]
+\end{equation*}
+which we will define as the loss function for logistic regression.
+\subsubsection{Multiclass Logistic Regression}
+If our classification problem is multiclass, our model must be able to
+predict the probability that an observation belongs to class \(k\).
+Given \(K \geqslant 2\) classes, let us try to generalise the sigmoid
+function we used for binary classification. Before we can do so, we
+must note the following:
+\begin{enumerate}
+    \item Each class will have it's own set of weights and biases.
+    \item The sum of the probabilities of all classes predicted by the
+          model must be equal to 1.
+    \item The model only has \(K - 1\) independent probabilities, and
+          therefore \(K - 1\) specifiable coefficients
+          \(\symbf{\beta}_k\), because the probability of the last
+          class can be defined as the complement of the other classes.
+\end{enumerate}
+Let us assume that the model has the form:
+\begin{equation*}
+    \Pr{\left( y = k \mid x;\: \symbf{\beta} \right)} = \frac{e^{\symbf{\beta}_k^\top \symbf{x}}}{e^{\symbf{\beta}_1^\top \symbf{x}} + \cdots + e^{\symbf{\beta}_K^\top \symbf{x}}}, \quad k = 1,\: \dots,\: K - 1
+\end{equation*}
+where each class \(k\) has a probability \(e^{\symbf{\beta}_k^\top \symbf{x}}\)
+parametrised by coefficients \(\symbf{\beta}_k\), and the denominator
+ensures that the sum of the probabilities is equal to 1. Now observe
+that we have \(K-1\) equations for \(K\) coefficient vectors
+\(\symbf{\beta}_1\) through \(\symbf{\beta}_K\):
+\begin{align*}
+    \Pr{\left( y = 1 \mid x;\: \symbf{\beta} \right)}   & = \frac{e^{\symbf{\beta}_1^\top \symbf{x}}}{e^{\symbf{\beta}_1^\top \symbf{x}} + \cdots + e^{\symbf{\beta}_K^\top \symbf{x}}}     \\
+    \Pr{\left( y = 2 \mid x;\: \symbf{\beta} \right)}   & = \frac{e^{\symbf{\beta}_2^\top \symbf{x}}}{e^{\symbf{\beta}_1^\top \symbf{x}} + \cdots + e^{\symbf{\beta}_K^\top \symbf{x}}}     \\
+                                                        & \vdotswithin{=}                                                                                                                   \\
+    \Pr{\left( y = K-1 \mid x;\: \symbf{\beta} \right)} & = \frac{e^{\symbf{\beta}_{K-1}^\top \symbf{x}}}{e^{\symbf{\beta}_1^\top \symbf{x}} + \cdots + e^{\symbf{\beta}_K^\top \symbf{x}}}
+\end{align*}
+as the probability of observing the \(K\)th class can be defined using
+the complement of the other classes:
+\begin{equation*}
+    \Pr{\left( y = K \mid x;\: \symbf{\beta} \right)} = 1 - \sum_{k = 1}^{K - 1} \Pr{\left( y = k \mid x;\: \symbf{\beta} \right)}.
+\end{equation*}
+Hence, we have an underdetermined system of equations, where
+\(\symbf{\beta}_K\) must be a free variable. If we choose to set this
+variable to 0, we find a unique solution for the coefficients
+\(\symbf{\beta}_1\) through \(\symbf{\beta}_{K-1}\):
+\begin{equation*}
+    \Pr{\left( y = k \mid x;\: \symbf{\beta} \right)} = \frac{e^{\symbf{\beta}_k^\top \symbf{x}}}{1 + \sum_{k = 1}^{K-1} e^{\symbf{\beta}_k^\top \symbf{x}}}, \quad k = 1,\: \dots,\: K - 1.
+\end{equation*}
+This model is therefore a generalisation of the model obtained using the
+sigmoid function to multiple classes, where we now use the
+\textbf{softmax} function. Using a similar derivation to the one we used
+for logistic regression, we can formulate the maximum likelihood
+estimator for a multiclass logistic regression model:
+\begin{align*}
+    \mathcal{L}\left( \symbf{\beta} \right)                     & = \Pr{\left( y^{\left( i \right)} \mid \symbf{X}^{\left( i \right)};\: \symbf{\beta} \right)}                                                                                                         \\
+    \mathcal{L}\left( \symbf{\beta} \right)                     & = \prod_{i = 1}^n \Pr{\left( y^{\left( i \right)} \mid \symbf{x}^{\left( i \right)};\: \symbf{\beta} \right)}                                                                                         \\
+    \ln{\left( \mathcal{L}\left( \symbf{\beta} \right) \right)} & = \ln{\prod_{i = 1}^n \Pr{\left( y^{\left( i \right)} \mid \symbf{x}^{\left( i \right)};\: \symbf{\beta} \right)}}                                                                                    \\
+    \ell\left( \symbf{\beta} \right)                            & = \sum_{i = 1}^n \ln{\Pr{\left( y^{\left( i \right)} \mid \symbf{x}^{\left( i \right)};\: \symbf{\beta} \right)}}                                                                                     \\
+                                                                & = \sum_{i = 1}^n \ln{\left[ \frac{e^{\symbf{\beta}_{y^{\left( i \right)}}^\top \symbf{x}^{\left( i \right)}}}{1 + \sum_{k = 1}^{K-1} e^{\symbf{\beta}_k^\top \symbf{x}^{\left( i \right)}}} \right]}.
+\end{align*}
+Therefore, to maximise the log-likelihood function, we will minimise
+the negative log-likelihood function:
+\begin{equation*}
+    L\left( \symbf{\beta} \right) = -\ln{\left[ \frac{e^{\symbf{\beta}_{y}^\top \symbf{x}}}{1 + \sum_{k = 1}^{K-1} e^{\symbf{\beta}_k^\top \symbf{x}}} \right]}.
+\end{equation*}
+When predictions lie between 0 and 1, as they do in logistic regression,
+this loss function is referred to as the \textbf{cross-entropy} loss
+function. This applies to both the binary and multiclass logistic
+regression models.
 \subsection{Support Vector Machines}
 Support Vector Machines (SVM) are a supervised learning model used for
 binary classification. The model works by finding a hyperplane that
@@ -1095,7 +1268,19 @@ between the margin and the slack variables.
           and produce a smaller margin.
 \end{itemize}
 \(C = \infty\) is equivalent to the hard margin SVM, as it forces
-\(\xi^{\left( i \right)} = 0\) for all \(i\).
+\(\xi^{\left( i \right)} = 0\) for all \(i\). Note that an alternative
+formulation of the soft margin SVM may use the \textbf{hinge loss}
+function instead:
+\begin{equation*}
+    \ell\left( \symbf{w},\: b \right) = \max\left( 0,\: 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \right).
+\end{equation*}
+This function is zero when a point is classified correctly, and
+increases linearly with the distance from the decision boundary when
+a point is misclassified. An equivalent formulation of the soft margin
+SVM is then:
+\begin{equation*}
+    \min_{\symbf{w},\: b} \quad \frac{1}{2}\norm*{\symbf{w}}^2 + C \left[ \frac{1}{n} \sum_{i = 1}^n \max\left( 0,\: 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \right) \right].
+\end{equation*}
 \subsection{K-Nearest Neighbours}
 The \(k\)-nearest neighbours (\(k\)-NN) algorithm is a simple
 classification algorithm that classifies a point based on the majority
@@ -1227,7 +1412,214 @@ search across a set of hyperparameters for multiple models, and
 selecting the model that performs best on a test set. This can be done
 using a grid search over all possible combinations, however this can be
 computationally expensive. Instead, we may use a random search to
-search a sparse grid, followed by a more fine-grained search. \newpage
+search a sparse grid, followed by a more fine-grained search.
+\section{Neural Networks}
+A neural network is a class of models that is inspired by the human
+brain. It is made up of interconnected units called \textbf{neurons},
+that are organised into layers. The simplest form of a neural network
+is the \textbf{feedforward neural network}, where data flows from one
+layer to the next.
+\begin{itemize}
+    \item The \textit{first} layer is called the \textbf{input layer},
+          and it receives the input data.
+    \item The \textit{last} layer is called the \textbf{output layer},
+          and it produces the output.
+    \item Any layers in between are called \textbf{hidden layers}.
+\end{itemize}
+Each neuron in a layer is connected to a neuron in the previous layer
+via an \textbf{edge}. Each edge has an associated \textbf{weight} that
+determines the strength of its connection to the next neuron. The
+\textbf{output} of a neuron is computed by applying a \textit{non-linear}
+function on the weighted sum of its inputs, called the \textbf{activation function}.
+\subsection{Early Models of Neural Networks}
+\subsubsection{Perceptron}
+The simplest form of a neural network is the \textbf{perceptron}, which
+is a single-layer neural network with one neuron.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.7\linewidth]{figures/perceptron.pdf}
+    % \caption{} % \label{}
+\end{figure}
+\noindent In this model, input nodes are coloured green and the output
+node is coloured pink. The output of this neuron, for the \(i\)-th
+observation is given by:
+\begin{equation*}
+    \hat{y}^{\left( i \right)} = a = g\left( \sum_{j = 1}^p w_j x_j^{\left( i \right)} + b \right)
+\end{equation*}
+for some activation function \(g\), weights \(w_j\), inputs
+\(x_j^{\left( i \right)}\), and bias term \(b\). For
+notational convenience we will denote the weighted sum as:
+\begin{equation*}
+    z^{\left( i \right)} = \sum_{j = 1}^p w_j x_j^{\left( i \right)} + b.
+\end{equation*}
+\subsubsection{Multilayer Perceptron}
+A \textbf{multilayer perceptron} (MLP) is a development of the
+perceptron that contains at least one hidden layer. In this model, we
+introduce \textit{hidden layers} that are placed between the input and
+output layers. The neurons in the hidden layer are \textit{fully
+connected}, meaning that each neuron in the previous layer is connected
+to each neuron in the next layer.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \linewidth]{figures/multi_layer_perceptron.pdf}
+    % \caption{} % \label{}
+\end{figure}
+As this model consists of multiple layers with multiple neurons in each
+layer, we will denote the output of the \(k\)-th neuron in the \(\ell\)-th
+layer as \(a_k^{\left[ \ell \right]}\). The output of this neuron is
+given by:
+\begin{equation*}
+    a_k^{\left[ \ell \right]} = g^{\left[ \ell \right]}\left( \sum_{j = 1}^{n^{\left[ \ell - 1 \right]}} w_{kj}^{\left[ \ell \right]} a_j^{\left[ \ell - 1 \right]} + b_k^{\left[ \ell \right]} \right).
+\end{equation*}
+Here, \(n^{\left[ \ell \right]}\) is the number of neurons in the
+\(\ell\)-th layer, \(w_{kj}^{\left[ \ell \right]}\) is the weight
+connecting the \(j\)-th neuron in the \(\left( \ell - 1 \right)\)-th
+layer to the \(k\)-th neuron in the \(\ell\)-th layer, and
+\(b_k^{\left[ \ell \right]}\) is the bias term of the \(k\)-th neuron in
+the \(\ell\)-th layer. Note that a neuron has a single bias term, and
+the activation function can be different for each layer. Once again, we
+can denote the weighted sum for the \(k\)-th neuron in the \(\ell\)-th
+layer as:
+\begin{equation*}
+    z_k^{\left[ \ell \right]} = \sum_{j = 1}^{n^{\left[ \ell - 1 \right]}} w_{kj}^{\left[ \ell \right]} a_j^{\left[ \ell - 1 \right]} + b_k^{\left[ \ell \right]}.
+\end{equation*}
+It is also useful to understand the output of the neurons at the
+first and last layers. The output of the \(k\)-th neuron in the first
+hidden layer for the \(i\)-th sample \(\symbf{x}^{\left( i \right)}\) is
+given by:
+\begin{equation*}
+    a_k^{\left[ 1 \right]} = g^{\left[ 1 \right]}\left( \sum_{j = 1}^p w_{kj}^{\left[ 1 \right]} x_j^{\left( i \right)} + b_k^{\left[ 1 \right]} \right).
+\end{equation*}
+The output of the \(k\)-th neuron in the output layer (or the \(L\)-th
+layer) is given by:
+\begin{equation*}
+    \hat{y}_k^{\left( i \right)} = a_k^{\left[ L \right]} = g^{\left[ L \right]}\left( \sum_{j = 1}^{n^{\left[ L - 1 \right]}} w_{kj}^{\left[ L \right]} a_j^{\left[ L - 1 \right]} + b_k^{\left[ L \right]} \right).
+\end{equation*}
+\subsection{Training a Neural Network}
+Now that we can mathematically describe a neural network, let us
+discuss how a neural network is trained. As with the models discussed
+so far, the goal of training a neural network is to find the optimal
+weights and biases in each layer that minimise a loss function. This is
+done using a technique called \textbf{backpropagation}.
+\subsubsection{Loss Functions}
+The choice of loss function is important, as it determines how a
+network is trained. Below is a table of common loss functions used to
+train neural networks.
+\begin{table}[H]
+    \centering
+    \begin{tabular}{ll}
+        \toprule
+        \textbf{Task}             & \textbf{Loss Function(s)}                                   \\
+        \midrule
+        Regression                & Mean Squared Error, Mean Absolute Error                     \\
+        Binary Classification     & Binary Cross-Entropy (Logistic Loss), Hinge Loss            \\
+        Multiclass Classification & Categorical Cross-Entropy, Sparse Categorical Cross-Entropy \\
+        \bottomrule
+    \end{tabular}
+    % \caption{} % \label{}
+\end{table}
+\noindent The following graphs show the shape of common loss functions corresponding
+to a prediction \(z\) for a true value \(y\).
+\begin{aside}
+    \textbf{Mean Squared Error \& Mean Absolute Error Loss:}
+    \begin{equation*}
+        {\left( y - z \right)}^2 \qquad \text{and} \qquad \abs*{y - z}
+    \end{equation*}
+    for \(y,z \in \R\).
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/mse.pdf}
+        \end{subfigure}
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/mae.pdf}
+        \end{subfigure}
+    \end{figure}
+    \noindent\textbf{Logistic Loss:}
+    \begin{equation*}
+        \ln{\left( 1 + \exp{\left( -yz \right)} \right)}
+    \end{equation*}
+    for \(y \in \left\{ -1,\: 1 \right\}\) and \(z \in \R\).
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/logistic0.pdf}
+        \end{subfigure}
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/logistic1.pdf}
+        \end{subfigure}
+    \end{figure}
+    \noindent\textbf{Hinge Loss:}
+    \begin{equation*}
+        \max{\left( 0,\: 1 - yz \right)}
+    \end{equation*}
+    for \(y \in \left\{ -1,\: 1 \right\}\) and \(z \in \R\).
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/hinge0.pdf}
+        \end{subfigure}
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/hinge1.pdf}
+        \end{subfigure}
+    \end{figure}
+    \noindent\textbf{Cross-Entropy Loss:}
+    \begin{equation*}
+        -\Bigl[ y \ln{z} + \left( 1 - y \right) \ln{\left( 1 - z \right)} \Bigr]
+    \end{equation*}
+    for \(y \in \left\{ 0,\: 1 \right\}\) and \(z \in \interval{0}{1}\).
+    \begin{figure}[H]
+        \centering
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/cross_entropy0.pdf}
+        \end{subfigure}
+        \begin{subfigure}[H]{0.45\linewidth}
+            \centering
+            \includegraphics[width = \linewidth]{figures/cross_entropy1.pdf}
+        \end{subfigure}
+    \end{figure}
+\end{aside}
+\subsection{Gradient Descent}
+\subsection{Backpropagation}
+\subsection{Activation Functions}
+\subsection{Convolutional Neural Networks}
+\subsection{Considerations for Training Neural Networks for Classification}
+\subsubsection{Target Variable Encoding}
+The choice of loss function depends on the encoding of the target variable.
+\begin{itemize}
+    \item \textbf{One-hot encoding} is used when each class is represented
+    as a unique binary vector where all elements are zero except for the
+    element corresponding to the class.
+    \item \textbf{Integer encoding} is used when each class is represented
+    as a unique integer.
+\end{itemize}
+If the target variable is one-hot encoded, then the \textbf{categorical
+cross-entropy} loss function is used. If classes in the target variable
+are encoded as integers, then the \textbf{sparse categorical cross-entropy}
+loss function is used.
+\subsubsection{Output Layer}
+Software packages that implement neural networks allow the user to
+specify the output of a network in two ways:
+\begin{itemize}
+        \item \textbf{Probabilities}: The output of the network is a
+        probability distribution over the classes. This is often achieved
+        by applying a \textbf{softmax} activation function to the
+        output layer, so that values range between 0 and 1.
+    \item \textbf{Logits}\footnote{The word ``logit'' comes from \textbf{logistic unit}, and is defined as the inverse of the sigmoid function. The same term is used in the context of the softmax function.}:
+          The output of the network is the raw output
+          of the network before the softmax activation function is
+          applied, so that values range between \(-\infty\) and \(\infty\).
+          This is often useful when the network is used for
+          inference.
+\end{itemize}
+\newpage
 \begin{appendix}
     \section{Numerical Summaries of Data}\label{appendix:numerical-summaries}
     \subsection{Mean}

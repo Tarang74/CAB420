@@ -1,0 +1,40 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usetikzlibrary{arrows.meta}
+
+\definecolor{orange}{RGB}{255,215,18}
+\definecolor{darkgrey}{RGB}{48,48,48}
+
+\begin{document}
+\begin{tikzpicture}[draw=darkgrey]
+    % Axis
+    \draw[->, thick, -{Stealth[round]}] (-3,0) -- (3,0) node[label={[label distance=1]135:\(z\)}] {};
+    \draw[thick] (2,-0.15) --++ (0,0.3);
+    \node[label=below:\(y \equal 1\)] at (2, 0) {};
+    \begin{axis}[
+        axis x line=none,
+        axis y line=none,
+        anchor=origin,
+        axis line style={draw=none},
+        xtick=\empty,
+        xmin=-1.25,
+        xmax=1.25,
+        ymin=-0.2,
+        ymax=1.1,
+        ytick=\empty,
+        x=2cm,
+        y=2cm,
+    ]
+        \addplot[color=orange,line width=2pt,opacity=0.9] table [x=z1, y=hinge1, col sep=comma] {tikz/losses/hinge.csv};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

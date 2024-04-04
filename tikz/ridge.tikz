@@ -12,7 +12,6 @@
 
 \usepackage{tikz}
 \usepackage{pgfplots}
-\usepackage{circuitikz}
 
 \definecolor{pink}{RGB}{255,52,124}
 \definecolor{lightblue}{RGB}{143,186,230}
