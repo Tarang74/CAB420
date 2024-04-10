@@ -1,0 +1,48 @@
+%!TEX TS-program = xelatex
+%!TEX options = -aux-directory=Debug -shell-escape -file-line-error -interaction=nonstopmode -halt-on-error -synctex=1 "%DOC%"
+\documentclass{standalone}
+
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+\setmathfont{TeX Gyre Pagella Math}[range={bb,bbit}, Scale=MatchUppercase]
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\usetikzlibrary{arrows.meta}
+
+\definecolor{pink}{RGB}{255,52,124}
+\definecolor{blue}{RGB}{50,205,255}
+\definecolor{green}{RGB}{67,243,150}
+\definecolor{darkgrey}{RGB}{48,48,48}
+
+\begin{document}
+\begin{tikzpicture}[draw=darkgrey,x=2cm,y=2cm]
+    % Axis
+    \draw[->, thick, -{Stealth[round]}] (-1,0) -- (1,0) node[label={[label distance=1]135:\(z\)}] {};
+    \draw[->, thick, -{Stealth[round]}] (0, -0.75) -- (0, 0.75);
+    \draw[thick] (-0.8,-0.08) --++ (0,0.16);
+    \draw[thick] (0.8,-0.08) --++ (0,0.16);
+    \draw[thick] (-0.08,0.5) --++ (0.16,0);
+    \draw[thick] (-0.08,-0.5) --++ (0.16,0);
+    \node[label={left:\(1\)}] at (0, 0.5) {};
+    \node[label={left:\(-1\)}] at (0, -0.5) {};
+    \node[label={below left:\(0\)}] at (0, 0) {};
+    \node[label={below:\(-4\)}] at (-0.8, 0) {};
+    \node[label={below:\(4\)}] at (0.8, 0) {};
+    \begin{axis}[
+        hide axis=true,
+        at={(0,0)},
+        anchor=origin,
+        xmin=-5,
+        xmax=5,
+        ymin=-1,
+        ymax=1,
+        clip=false,
+        x=0.4cm,
+        y=1cm,
+    ]
+        \addplot[color=green,line width=2pt,opacity=0.9] table [x=z, y=tanh, col sep=comma] {tikz/activations/sigmoidal.csv};
+    \end{axis}
+\end{tikzpicture}
+\end{document}

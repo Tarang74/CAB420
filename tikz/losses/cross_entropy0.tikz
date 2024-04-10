@@ -17,26 +17,24 @@
 \definecolor{darkgrey}{RGB}{48,48,48}
 
 \begin{document}
-\begin{tikzpicture}[draw=darkgrey]
+\begin{tikzpicture}[draw=darkgrey,x=4cm,y=4cm]
     % Axis
-    \draw[->, thick, -{Stealth[round]}] (-3,0) -- (3,0) node[label={[label distance=1]135:\(z\)}] {};
-    \draw[thick] (-2,-0.15) --++ (0,0.3);
-    \draw[thick] (2,-0.15) --++ (0,0.3);
-    \node[label=below:\(y \equal 0\)] at (-2, 0) {};
-    \node[label=below:\(1\)] at (2, 0) {};
+    \draw[->, thick, -{Stealth[round]}] (-0.25,0) -- (1.25,0) node[label={[label distance=1]135:\(z\)}] {};
+    \draw[thick] (0,-0.04) --++ (0,0.08);
+    \draw[thick] (1,-0.04) --++ (0,0.08);
+    \node[label=below:\(y \equal 0\)] at (0, 0) {};
+    \node[label=below:\(1\)] at (1, 0) {};
     \begin{axis}[
-        axis x line=none,
-        axis y line=none,
-        anchor=origin,
-        axis line style={draw=none},
-        xtick=\empty,
-        xmin=-0.6,
-        xmax=0.6,
-        ymin=-0.1,
+        hide axis=true,
+        at={(0,0)},
+        anchor=south west,
+        xmin=0,
+        xmax=1,
+        ymin=0,
         ymax=0.7,
-        ytick=\empty,
+        clip=false,
         x=4cm,
-        y=4cm
+        y=4cm,
     ]
         \addplot[color=blue,line width=2pt,opacity=0.9] table [x=z, y=crossentropy0, col sep=comma] {tikz/losses/crossentropy.csv};
     \end{axis}

@@ -2,11 +2,11 @@ clear; close all; clc;
 
 h = 0.01;
 
-zreal = -1:h:1; zreal(end) = [];
-zlog = -1:h:1; zlog(end) = [];
-zhinge0 = -1.25:h:1; zhinge0(end) = [];
-zhinge1 = -1:h:1.25; zhinge1(end) = [];
-zprob = 0:h:1; zprob(end) = [];
+zreal = -1:h:1;
+zlog = -1:h:1;
+zhinge0 = -1.25:h:1; 
+zhinge1 = -1:h:1.25;
+zprob = 0:h:1;
 
 % Regression: y in Reals
 y = 0;
@@ -25,9 +25,12 @@ hinge1 = max(0, 1 - y * zhinge1)/2;
 % Classification y in [0, 1]
 y = 0;
 crossentropy0 = -(y * log(zprob) + (1 - y) * log(1 - zprob))/10;
+crossentropy0(1) = 0;
 
 y = 1;
 crossentropy1 = -(y * log(zprob) + (1 - y) * log(1 - zprob))/10;
+crossentropy1(end) = 0;
+
 
 figure
 plot(zreal, mse)
@@ -65,4 +68,4 @@ ylim([0 1])
 writetable(array2table([zreal.' mse.' mae.'], 'VariableNames', {'z', 'mse', 'mae'}), 'regression.csv', 'LineEnding', '\n') 
 writetable(array2table([zlog.' logistic0.' logistic1.'], 'VariableNames', {'z', 'logistic0', 'logistic1'}), 'logistic.csv', 'LineEnding', '\n') 
 writetable(array2table([zhinge0.' zhinge1.' hinge0.' hinge1.'], 'VariableNames', {'z0', 'z1', 'hinge0', 'hinge1'}), 'hinge.csv', 'LineEnding', '\n') 
-writetable(array2table([(zprob-0.5).' crossentropy0.' crossentropy1.'], 'VariableNames', {'z', 'crossentropy0', 'crossentropy1'}), 'crossentropy.csv', 'LineEnding', '\n') 
+writetable(array2table([zprob.' crossentropy0.' crossentropy1.'], 'VariableNames', {'z', 'crossentropy0', 'crossentropy1'}), 'crossentropy.csv', 'LineEnding', '\n') 

@@ -19,22 +19,30 @@
 \begin{document}
 \begin{tikzpicture}[draw=darkgrey,x=2cm,y=2cm]
     % Axis
-    \draw[->, thick, -{Stealth[round]}] (-1.5,0) -- (1.5,0) node[label={[label distance=1]135:\(z\)}] {};
-    \draw[thick] (0,-0.08) --++ (0,0.16);
-    \node[label=below:\(y \in \mathbb{R}\)] at (0, 0) {};
+    \draw[->, thick, -{Stealth[round]}] (-1,0) -- (1,0) node[label={[label distance=1]135:\(z\)}] {};
+    \draw[->, thick, -{Stealth[round]}] (0, -0.25) -- (0, 1.25);
+    \draw[thick] (-0.8,-0.08) --++ (0,0.16);
+    \draw[thick] (0.8,-0.08) --++ (0,0.16);
+    \draw[thick] (-0.08,0.5) --++ (0.16,0);
+    \draw[thick] (-0.08,1) --++ (0.16,0);
+    \node[label={left:\(1\)}] at (0, 1) {};
+    \node[label={left:\(\frac{1}{2}\)}] at (0, 0.5) {};
+    \node[label={below left:\(0\)}] at (0, 0) {};
+    \node[label={below:\(-4\)}] at (-0.8, 0) {};
+    \node[label={below:\(4\)}] at (0.8, 0) {};
     \begin{axis}[
         hide axis=true,
         at={(0,0)},
         anchor=origin,
-        xmin=-1.25,
-        xmax=1.25,
+        xmin=-5,
+        xmax=5,
         ymin=0,
-        ymax=2,
+        ymax=1,
         clip=false,
-        x=2cm,
+        x=0.4cm,
         y=2cm,
     ]
-        \addplot[color=green,line width=2pt,opacity=0.9] table [x=z, y=mse, col sep=comma] {tikz/losses/regression.csv};
+        \addplot[color=green,line width=2pt,opacity=0.9] table [x=z, y=sigmoid, col sep=comma] {tikz/activations/sigmoidal.csv};
     \end{axis}
 \end{tikzpicture}
 \end{document}

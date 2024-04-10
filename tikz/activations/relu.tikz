@@ -17,26 +17,24 @@
 \definecolor{darkgrey}{RGB}{48,48,48}
 
 \begin{document}
-\begin{tikzpicture}[draw=darkgrey,x=4cm,y=4cm]
+\begin{tikzpicture}[draw=darkgrey,x=2cm,y=2cm]
     % Axis
-    \draw[->, thick, -{Stealth[round]}] (-0.25,0) -- (1.25,0) node[label={[label distance=1]135:\(z\)}] {};
-    \draw[thick] (0,-0.04) --++ (0,0.08);
-    \draw[thick] (1,-0.04) --++ (0,0.08);
-    \node[label=below:\(0\)] at (0, 0) {};
-    \node[label=below:\(y \equal 1\)] at (1, 0) {};
+    \draw[->, thick, -{Stealth[round]}] (-1,0) -- (1,0) node[label={[label distance=1]135:\(z\)}] {};
+    \draw[->, thick, -{Stealth[round]}] (0,-1) -- (0,1);
+    \node[label={below left:\(0\)}] at (0, 0) {};
     \begin{axis}[
         hide axis=true,
         at={(0,0)},
-        anchor=south west,
-        xmin=0,
-        xmax=1,
+        anchor=origin,
+        xmin=-2,
+        xmax=2,
         ymin=0,
-        ymax=0.7,
+        ymax=2,
         clip=false,
-        x=4cm,
-        y=4cm,
+        x=1cm,
+        y=1cm,
     ]
-        \addplot[color=blue,line width=2pt,opacity=0.9] table [x=z, y=crossentropy1, col sep=comma] {tikz/losses/crossentropy.csv};
+        \addplot[color=blue,line width=2pt,opacity=0.9] table [x=z, y=relu, col sep=comma] {tikz/activations/linearunit.csv};
     \end{axis}
 \end{tikzpicture}
 \end{document}
