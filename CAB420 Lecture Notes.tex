@@ -448,13 +448,11 @@ regression to be valid:
 \begin{enumerate}
     \item \textbf{Linearity}: The relationship between the response and
           predictors is linear.
-    \item \textbf{No Multicollinearity}: Predictors are not linearly
-          dependent.
+    \item \textbf{No Multicollinearity}: Predictors are linearly independent.
     \item \textbf{Independence}: Responses are linearly independent.
     \item \textbf{Normality}: Residuals are normally distributed.
-    \item \textbf{Homoscedasticity}: Residuals have constant variance.
-    \item \textbf{Exogeneity}: There is no correlation between
-          predictors and residuals.
+    \item \textbf{Homoscedasticity}: Residuals have constant variance and do not depend on \(i\).
+    \item \textbf{Exogeneity}: There is no correlation between predictors and residuals.
 \end{enumerate}
 \subsection{Testing the Assumptions of Linear Regression}
 To test the above assumptions, we can use the following techniques:
@@ -470,7 +468,7 @@ To test the above assumptions, we can use the following techniques:
 \end{itemize}
 \subsubsection{Linearity}
 \begin{itemize}
-    \item \textbf{Scatter plot}: Plot observations with the predicted
+    \item \textbf{Scatter plot}: Plot responses with the predicted
           model to visually check for linearity
     \item \textbf{Residual plot}: Plot residuals against predictors. If
           the residuals are randomly distributed about 0, then the model
@@ -502,9 +500,8 @@ negative autocorrelation, respectively.
 \end{itemize}
 \subsubsection{Homoscedasticity}
 \begin{itemize}
-    \item \textbf{Residual plot}: Plot residuals against predicted
-          values. A constant spread of residuals about 0 suggests
-          homoscedasticity.
+    \item \textbf{Residual plot}: Plot residuals against predictions.
+          A constant spread of residuals about 0 suggests homoscedasticity.
 \end{itemize}
 \subsubsection{Exogeneity}
 \begin{itemize}
@@ -512,7 +509,7 @@ negative autocorrelation, respectively.
           the residuals are randomly distributed about 0, then the model
           suggests exogeneity.
 \end{itemize}
-\subsection{Testing Overal Model Fit}
+\subsection{Testing Overall Model Fit}
 The OLS (Ordinary Least Squares) model in the \texttt{statsmodels}
 package can be used to produce regression outputs from a linear
 regression model. The following table is an example of the output from
@@ -1093,42 +1090,45 @@ The \textbf{decision boundary} is completely determined by the points
 that lie nearest to it. These points are called \textbf{support vectors}.
 \subsubsection{The Dual Problem}
 We can reformulate the optimisation problem for the optimal margin
-classifier using \textbf{Lagrange multipliers}:
+classifier using \textbf{Lagrange multipliers}.
 \begin{align*}
-    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha_i \left( 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \right)       \\
-                                                               & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha_i \left( 1 - y^{\left( i \right)} \symbf{w}^\top \symbf{x}^{\left( i \right)} + y^{\left( i \right)} b \right)
+    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha^{\left( i \right)} \left( 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \right)       \\
+                                                               & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha^{\left( i \right)} \left( 1 - y^{\left( i \right)} \symbf{w}^\top \symbf{x}^{\left( i \right)} + y^{\left( i \right)} b \right)
 \end{align*}
-where \(\symbf{\alpha} = \left( \alpha_1,\: \dots,\: \alpha_n \right)\)
+where \(\symbf{\alpha} = \left( \alpha^{\left( 1 \right)},\: \dots,\: \alpha^{\left( n \right)} \right)\)
 is a vector of Lagrange multipliers. The \textbf{dual problem} is then
 given by:
 \begin{align*}
     \max_{\symbf{\alpha}} \quad & \min_{\symbf{w},\: b} \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) \\
-    \text{subject to} \quad     & \alpha_i \geqslant 0, \quad i = 1,\: \dots,\: n                                  \\
+    \text{subject to} \quad     & \alpha^{\left( i \right)} \geqslant 0, \quad i = 1,\: \dots,\: n                 \\
                                 & \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{\symbf{w}} = 0  \\
                                 & \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{b} = 0.
 \end{align*}
 The two partial derivatives are given by:
 \begin{align*}
-    \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{\symbf{w}} & = \symbf{w} - \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} = \symbf{0} \quad \implies \quad \symbf{w} = \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} \\
-    \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{b}         & = \sum_{i = 1}^n \alpha_i y^{\left( i \right)} = 0.
+    \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{\symbf{w}} & = \symbf{w} - \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} \symbf{x}^{\left( i \right)} = \symbf{0} \quad \implies \quad \symbf{w} = \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} \symbf{x}^{\left( i \right)} \\
+    \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right)}{b}         & = \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} = 0.
 \end{align*}
 The Lagrangian then simplifies to:
 \begin{align*}
-    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha_i \left( 1 - y^{\left( i \right)} \symbf{w}^\top \symbf{x}^{\left( i \right)} + y^{\left( i \right)} b \right)                                                      \\
+    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\alpha} \right) & = \frac{1}{2}\norm*{\symbf{w}}^2 + \sum_{i = 1}^n \alpha^{\left( i \right)} \left( 1 - y^{\left( i \right)} \symbf{w}^\top \symbf{x}^{\left( i \right)} + y^{\left( i \right)} b \right)                                                                      \\
                                                                & =
     \begin{aligned}[t]
-         & \frac{1}{2} \left( \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)^\top \left( \sum_{i = 1}^n \alpha_i y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)                                                               \\
-         & + \sum_{i = 1}^n \alpha_i - \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} + b \sum_{i = 1}^n \alpha_i y^{\left( i \right)}
+         & \frac{1}{2} \left( \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)^\top \left( \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)                                                                                \\
+         & + \sum_{i = 1}^n \alpha^{\left( i \right)} - \sum_{i = 1}^n \sum_{j = 1}^n \alpha^{\left( i \right)} \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} + b \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)}
     \end{aligned}
     \\
-                                                               & = \sum_{i = 1}^n \alpha_i - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}}.
+                                                               & = \sum_{i = 1}^n \alpha^{\left( i \right)} - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha^{\left( i \right)} \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} \\
+                                                               & = \symbf{\alpha}^\top \symbf{1} - \frac{1}{2} \norm*{\left( \symbf{\alpha} \odot \symbf{y} \right)^\top \symbf{X}}^2
 \end{align*}
+where \(\symbf{1}\) is a vector of ones, and \(\odot\) denotes the
+element-wise product.
 Therefore, in this form, we find that our problem only depends on the
 inner product of points in the dataset:
 \begin{align*}
-    \max_{\symbf{\alpha}} \quad & \sum_{i = 1}^n \alpha_i - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha_i \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} \\
-    \text{subject to} \quad     & \alpha_i \geqslant 0, \quad i = 1,\: \dots,\: n                                                                                                                                                                           \\
-                                & \sum_{i = 1}^n \alpha_i y^{\left( i \right)} = 0.
+    \max_{\symbf{\alpha}} \quad & \sum_{i = 1}^n \alpha^{\left( i \right)} - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha^{\left( i \right)} \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} \\
+    \text{subject to} \quad     & \alpha^{\left( i \right)} \geqslant 0, \quad i = 1,\: \dots,\: n                                                                                                                                                                                            \\
+                                & \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} = 0.
 \end{align*}
 By examining the dual form of the optimisation problem, we can see that
 our algorithm is in terms of inner products between input vectors. This
@@ -1282,6 +1282,45 @@ SVM is then:
 \begin{equation*}
     \min_{\symbf{w},\: b} \quad \frac{1}{2}\norm*{\symbf{w}}^2 + C \left[ \frac{1}{n} \sum_{i = 1}^n \max\left( 0,\: 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) \right) \right].
 \end{equation*}
+The dual problem can be solved in a similar manner to the hard margin
+SVM. The Lagrangian is given by:
+\begin{equation*}
+    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\xi},\: \symbf{\alpha},\: \symbf{\beta} \right) = \frac{1}{2}\norm*{\symbf{w}}^2 + C \sum_{i = 1}^n \xi^{\left( i \right)} + \sum_{i = 1}^n \alpha^{\left( i \right)} \left( 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) - \xi^{\left( i \right)} \right) + \sum_{i = 1}^n \beta^{\left( i \right)} \left( -\xi^{\left( i \right)} \right).
+\end{equation*}
+The partial derivatives for this problem are identical to the hard
+margin SVM, with the addition of the partial derivative with respect to
+\(\xi^{\left( i \right)}\):
+\begin{equation*}
+    \pdv{\mathcal{L}\left( \symbf{w},\: b,\: \symbf{\xi},\: \symbf{\alpha},\: \symbf{\beta} \right)}{\xi^{\left( i \right)}} = C - \left( \alpha^{\left( i \right)} + \beta^{\left( i \right)} \right) = 0 \implies C = \alpha^{\left( i \right)} + \beta^{\left( i \right)}.
+\end{equation*}
+This results in the following Lagrangian:
+\begin{align*}
+    \mathcal{L}\left( \symbf{w},\: b,\: \symbf{\xi},\: \symbf{\alpha},\: \symbf{\beta} \right) & = \frac{1}{2}\norm*{\symbf{w}}^2 + C \sum_{i = 1}^n \xi^{\left( i \right)} + \sum_{i = 1}^n \alpha^{\left( i \right)} \left( 1 - y^{\left( i \right)} \left( \symbf{w}^\top \symbf{x}^{\left( i \right)} - b \right) - \xi^{\left( i \right)} \right) + \sum_{i = 1}^n \beta^{\left( i \right)} \left( -\xi^{\left( i \right)} \right) \\
+                                                                                               & =
+    \begin{aligned}[t]
+         & \frac{1}{2} \left( \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)^\top \left( \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} \symbf{x}^{\left( i \right)} \right)                                                                                \\
+         & + \sum_{i = 1}^n \alpha^{\left( i \right)} - \sum_{i = 1}^n \sum_{j = 1}^n \alpha^{\left( i \right)} \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} + b \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} \\
+         & + C \sum_{i = 1}^n \xi^{\left( i \right)} - \sum_{i = 1}^n \xi^{\left( i \right)} \left( \alpha^{\left( i \right)} + \beta^{\left( i \right)} \right)
+    \end{aligned}
+    \\
+                                                                                               & = \sum_{i = 1}^n \alpha^{\left( i \right)} - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha^{\left( i \right)} \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}}                                                                          \\
+                                                                                               & = \symbf{\alpha}^\top \symbf{1} - \frac{1}{2} \norm*{\left( \symbf{\alpha} \odot \symbf{y} \right)^\top \symbf{X}}^2
+\end{align*}
+The dual problem is then given by:
+\begin{align*}
+    \max_{\symbf{\alpha},\: \symbf{\alpha}} \quad & \sum_{i = 1}^n \alpha^{\left( i \right)} - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha^{\left( i \right)} \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} \\
+    \text{subject to} \quad                       & \alpha^{\left( i \right)} \geqslant 0, \quad i = 1,\: \dots,\: n                                                                                                                                                                                            \\
+                                                  & \beta^{\left( i \right)} \geqslant 0, \quad i = 1,\: \dots,\: n                                                                                                                                                                                             \\
+                                                  & C = \alpha^{\left( i \right)} + \beta^{\left( i \right)}, \quad i = 1,\: \dots,\: n                                                                                                                                                                         \\
+                                                  & \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} = 0.
+\end{align*}
+As \(\beta^{\left( i \right)} = C - \alpha^{\left( i \right)}\) does not
+appear in the objective function, it can be eliminated from the problem:
+\begin{align*}
+    \max_{\symbf{\alpha}} \quad & \sum_{i = 1}^n \alpha^{\left( i \right)} - \frac{1}{2} \sum_{i = 1}^n \sum_{j = 1}^n \alpha^{\left( i \right)} \alpha^{\left( j \right)} y^{\left( i \right)} y^{\left( j \right)} \abracket*{\symbf{x}^{\left( i \right)},\: \symbf{x}^{\left( j \right)}} \\
+    \text{subject to} \quad     & 0 \leqslant \alpha^{\left( i \right)} \leqslant C, \quad i = 1,\: \dots,\: n                                                                                                                                                                                \\
+                                & \sum_{i = 1}^n \alpha^{\left( i \right)} y^{\left( i \right)} = 0.
+\end{align*}
 \subsection{K-Nearest Neighbours}
 The \(k\)-nearest neighbours (\(k\)-NN) algorithm is a simple
 classification algorithm that classifies a point based on the majority
@@ -1415,12 +1454,14 @@ using a grid search over all possible combinations, however this can be
 computationally expensive. Instead, we may use a random search to
 search a sparse grid, followed by a more fine-grained search.
 \part{Deep Learning}
-\section{Neural Networks}
 A neural network is a class of models that is inspired by the human
 brain. It is made up of interconnected units called \textbf{neurons},
-that are organised into layers. The simplest form of a neural network
-is the \textbf{feedforward neural network}, where data flows from one
-layer to the next.
+that are organised into layers. The upcoming sections will discuss
+various kinds of neural networks that have been proposed over the past
+decades.
+\section{Feedforward Neural Networks}
+The simplest form of a neural network is the \textbf{feedforward neural
+network}, where data flows from one layer to the next.
 \begin{itemize}
     \item The \textit{first} layer is called the \textbf{input layer},
           and it receives the input data.
@@ -1433,7 +1474,10 @@ via an \textbf{edge}. Each edge has an associated \textbf{weight} that
 determines the strength of its connection to the next neuron. The
 \textbf{output} of a neuron is computed by applying a \textit{non-linear}
 function on the weighted sum of its inputs, called the \textbf{activation function}.
-\subsection{Early Models of Neural Networks}
+\subsection{Fully Connected Networks}
+The earliest forms of neural networks were \textbf{fully connected},
+meaning that each neuron in a layer is connected to every neuron in the
+next layer. This is also known as a \textbf{dense} layer.
 \subsubsection{Perceptron}
 The simplest form of a neural network is the \textbf{perceptron}, which
 is a single-layer neural network with one neuron.
@@ -1497,7 +1541,7 @@ layer) is given by:
 \begin{equation*}
     \hat{y}_k^{\left( i \right)} = a_k^{\left[ L \right]} = g^{\left[ L \right]}\left( \sum_{j = 1}^{n^{\left[ L - 1 \right]}} w_{kj}^{\left[ L \right]} a_j^{\left[ L - 1 \right]} + b_k^{\left[ L \right]} \right).
 \end{equation*}
-\subsection{Vectorised Form}
+\subsubsection{Vectorised Form}
 For both notational convenience and parallelisation, we can represent
 the above equations in a vectorised form. Let us define the following
 quantities:
@@ -1552,8 +1596,9 @@ every layer:
 \begin{equation*}
     \hat{\symbf{y}}^{\left( i \right)} = \symbf{a}^{\left[ L \right]} = g^{\left[ L \right]}\left( \symbf{W}^{\left[ L \right]} g^{\left[ L - 1 \right]}\left( \symbf{W}^{\left[ L - 1 \right]} g^{\left[ L - 2 \right]}\left( \cdots g^{\left[ 1 \right]}\left( \symbf{W}^{\left[ 1 \right]} \symbf{x}^{\left( i \right)} + \symbf{b}^{\left[ 1 \right]} \right) \cdots \right) + \symbf{b}^{\left[ L - 1 \right]} \right) + \symbf{b}^{\left[ L \right]} \right).
 \end{equation*}
+\section{Training Neural Networks}
 \subsection{Loss Functions}
-The choice of loss function is important, as it determines how a
+A loss function must be chosen at the output layer to determine how a
 network penalises errors during training. Below is a table of common
 loss functions used to train neural networks.
 \begin{table}[H]
@@ -1640,8 +1685,8 @@ corresponding to a prediction \(z\) for a true value \(y\).
 Activation functions are used to introduce non-linearity into a neural
 network. If we simply passed weighted sums from one layer to the next,
 a neural network would be equivalent to a linear regression model, that
-would be able to learn complex patterns in data. Below is a table of
-common activation functions applied to the weighted sum \(z\).
+is unable to learn complex patterns in data. Below is a table of common
+activation functions applied to the weighted sum \(z\).
 \begin{table}[H]
     \centering
     \begin{tabular}{lc}
@@ -1700,84 +1745,12 @@ prevent the \textbf{dying ReLU problem} where neurons stop learning
 during training. The advantage of using a rectified function is that it
 also produces a sparse representation, that can help prevent
 overfitting.
-\subsection{Considerations for Training Neural Networks for Classification}
-\subsubsection{Target Variable Encoding}
-The choice of loss function depends on the encoding of the target
-variable.
-\begin{itemize}
-    \item \textbf{One-hot encoding} is used when each class is represented
-          as a unique binary vector where all elements are zero except for the
-          element corresponding to the class.
-    \item \textbf{Integer encoding} is used when each class is represented
-          as a unique integer.
-\end{itemize}
-If the target variable is one-hot encoded, then the \textbf{categorical
-    cross-entropy} loss function is used. If classes in the target variable
-are encoded as integers, then the \textbf{sparse categorical cross-entropy}
-loss function is used.
-\subsubsection{Output Layer}
-Software packages that implement neural networks allow the user to
-specify the output of a network in two ways:
-\begin{itemize}
-    \item \textbf{Probabilities}: The output of the network is a
-          probability distribution over the classes. This is often achieved
-          by applying a \textbf{softmax} activation function to the
-          output layer, so that values range between 0 and 1.
-    \item \textbf{Logits}\footnote{The word ``logit'' comes from \textbf{logistic unit}, and is defined as the inverse of the sigmoid function. The same term is used in the context of the softmax function.}:
-          The output of the network is the raw output
-          of the network before the softmax activation function is
-          applied, so that values range between \(-\infty\) and \(\infty\).
-          This is often useful when the network is used for
-          inference.
-\end{itemize}
-\section{Optimisation Algorithms}
-The following sections discuss various techniques used to train neural
-networks.
-\subsection{Gradient Descent}
-Gradient descent is an iterative optimisation algorithm used to
-minimise a function, when a closed-form derivative for a function is
-not obtainable. The algorithm works by repeatedly taking steps in the
-opposite direction of the gradient of the loss function, as this is the
-direction of greatest decrease. The resulting update rule for the
-weights of a model is given by:
-\begin{equation*}
-    w \leftarrow w - \alpha \pdv{L\left( w \right)}{w}
-\end{equation*}
-for a learning rate \(\alpha\). This learning rate is a hyperparameter
-that controls the size of the step taken in the direction of greatest
-decrease. If the learning rate is too small, the algorithm may take a
-long time to converge, and if it is too large, the algorithm may
-oscillate around a minimum.
-
-There are several variants of gradient descent that are used to improve
-convergence and speed up training.
-\begin{itemize}
-    \item \textbf{Batch Gradient Descent}: Weights are updated after
-          computing the gradient of the loss function with respect to
-          the entire training set:
-          \begin{equation*}
-              \symbf{w} \leftarrow \symbf{w} - \alpha \pdv{J\left( \symbf{w} \right)}{\symbf{w}}, \quad J\left( \symbf{w} \right) = \frac{1}{n} \sum_{i = 1}^n L^{\left( i \right)}\left( \symbf{w} \right).
-          \end{equation*}
-    \item \textbf{Stochastic Gradient Descent}: Weights are updated after
-          computing the gradient of the loss function with respect to a
-          single training example:
-          \begin{equation*}
-              w \leftarrow w - \alpha \pdv{L^{\left( i \right)}\left( w \right)}{w}.
-          \end{equation*}
-    \item \textbf{Mini-Batch Gradient Descent}: Weights are updated after
-          computing the gradient of the loss function with respect to a
-          small subset of the training set:
-          \begin{equation*}
-              \symbf{w} \leftarrow \symbf{w} - \alpha \pdv*{\left( \frac{1}{b} \sum_{i = 1}^b L^{\left( i \right)}\left( \symbf{w} \right) \right)}{\symbf{w}},
-          \end{equation*}
-          for a batch size \(b\).
-\end{itemize}
 \subsection{Backpropagation}
-As we saw previously, the output of a neural network consists of a
-composition of functions, where each layer may have a different number
-of nodes. Hence, let use the gradient descent algorithm to optimise the
-weights in a network. Let us first define the \textbf{error} of a
-neuron in the \(L\)-th layer as:
+A neural network is trained by updating the weights of each neuron in
+each layer to minimise the loss at the output neuron. Let us derive an
+algorithm to efficiently update these weights in a feedforward neural
+network. Let us first define the \textbf{error} of a neuron in the
+\(L\)-th layer as:
 \begin{equation*}
     \delta_k^{\left[ L \right]} = \pdv{L}{z_k^{\left[ L \right]}},
 \end{equation*}
@@ -1825,7 +1798,7 @@ for a learning rate \(\alpha\), where
     \delta_k^{\left[ \ell \right]} =
     \begin{cases}
         \displaystyle g^{\prime\left[ \ell \right]}\left( z_k^{\left[ \ell \right]} \right) \sum_{l = 1}^{n^{\left[ \ell + 1 \right]}} \delta_{l}^{\left[ \ell + 1 \right]} w_{l k}^{\left[ \ell + 1 \right]}, & \ell < L \\
-        \displaystyle \pdv{L}{z_k^{\left[ \ell \right]}}, & \ell = L
+        \displaystyle \pdv{L}{z_k^{\left[ \ell \right]}},                                                                                                                                                      & \ell = L
     \end{cases}
 \end{equation*}
 The \textbf{backpropagation algorithm} can be
@@ -1854,13 +1827,13 @@ described with the following steps:
           \end{enumerate}
     \item Combine the losses over a batch of observations to calculate
           the cost.
-    \item Update the weights and biases using the gradient descent
-          update rule.
+    \item Update the weights and biases using an optimisation
+          algorithm.
 \end{enumerate}
 \subsection{Vectorised Backpropagation}
 We can vectorise the equations above by denoting the vector of errors
-in the \(\ell\)-th layer with \(\symbf{\delta}^{\left[ \ell \right]} \in \R^{1 \times n^{\left[ \ell \right]}}\),
-defined as:
+in the \(\ell\)-th layer with \(\symbf{\delta}^{\left[ \ell \right]}
+\in \R^{1 \times n^{\left[ \ell \right]}}\), defined as:
 \begin{equation*}
     \symbf{\delta}^{\left[ \ell \right]} = {\left( \pdv{\ell}{\symbf{z}^{\left[ \ell \right]}} \right)}^\top
 \end{equation*}
@@ -1874,7 +1847,7 @@ with the error of a neuron in the \(\ell\)-th layer given by:
     \symbf{\delta}^{\left[ \ell \right]} =
     \begin{cases}
         \displaystyle {g^{\prime\left[ \ell \right]}\left( \symbf{z}^{\left[ \ell \right]} \right)}^\top \odot \left( \symbf{\delta}^{\left[ \ell + 1 \right]} \symbf{W}^{\left[ \ell + 1 \right]} \right), & \ell < L \\
-        \displaystyle {\left( \pdv{L}{\symbf{z}^{\left[ \ell \right]}} \right)}^\top, & \ell = L \\
+        \displaystyle {\left( \pdv{L}{\symbf{z}^{\left[ \ell \right]}} \right)}^\top,                                                                                                                       & \ell = L \\
     \end{cases}
 \end{equation*}
 for \(\ell < L\), where \(\odot\) denotes the Hadamard product
@@ -1950,9 +1923,9 @@ observations:
           \begin{equation*}
               \symbf{\Delta}^{\left[ \ell \right]} =
               \begin{bmatrix}
-                  \vertbar                                         &        & \vertbar                                         \\[1ex]
+                  \vertbar                                              &        & \vertbar                                              \\[1ex]
                   \symbf{\delta}^{\left[ \ell \right] \left( 1 \right)} & \cdots & \symbf{\delta}^{\left[ \ell \right] \left( b \right)} \\
-                  \vertbar                                         &        & \vertbar
+                  \vertbar                                              &        & \vertbar
               \end{bmatrix}
               .
           \end{equation*}
@@ -1972,18 +1945,457 @@ where the error of neurons in the \(\ell\)-th layer is given by:
     \symbf{\Delta}^{\left[ \ell \right]} =
     \begin{cases}
         \displaystyle {g^{\prime\left[ \ell \right]}\left( \symbf{Z}^{\left[ \ell \right]} \right)}^\top \odot \left( \symbf{\Delta}^{\left[ \ell + 1 \right]} \symbf{W}^{\left[ \ell + 1 \right]} \right), & \ell < L \\
-        \displaystyle {\left( \pdv{L}{\symbf{Z}^{\left[ \ell \right]}} \right)}^\top, & \ell = L
+        \displaystyle {\left( \pdv{L}{\symbf{Z}^{\left[ \ell \right]}} \right)}^\top,                                                                                                                       & \ell = L
     \end{cases}
 \end{equation*}
-\subsection{Regularisation}
-\subsubsection{L1 Regularisation}
-\subsubsection{L2 Regularisation}
-\subsubsection{Dropout}
+\subsection{Considerations for Classification Problems}
+\subsubsection{Target Variable Encoding}
+The choice of loss function depends on the encoding of the target
+variable.
+\begin{itemize}
+    \item \textbf{One-hot encoding} is used when each class is represented
+          as a unique binary vector where all elements are zero except for the
+          element corresponding to the class.
+    \item \textbf{Integer encoding} is used when each class is represented
+          as a unique integer.
+\end{itemize}
+If the target variable is one-hot encoded, then the \textbf{categorical
+    cross-entropy} loss function is used. If classes in the target variable
+are encoded as integers, then the \textbf{sparse categorical cross-entropy}
+loss function is used.
+\subsubsection{Output Layer}
+Software packages that implement neural networks allow the user to
+specify the output of a network in two ways:
+\begin{itemize}
+    \item \textbf{Probabilities}: The output of the network is a
+          probability distribution over the classes. This is often achieved
+          by applying a \textbf{softmax} activation function to the
+          output layer, so that values range between 0 and 1.
+    \item \textbf{Logits}\footnote{The word ``logit'' comes from \textbf{logistic unit}, and is defined as the inverse of the sigmoid function. The same term is used in the context of the softmax function.}:
+          The output of the network is the raw output
+          of the network before the softmax activation function is
+          applied, so that values range between \(-\infty\) and \(\infty\).
+          This is often useful when the network is used for
+          inference.
+\end{itemize}
+\subsection{Ensemble Methods}
+During training, neural networks introduce randomness in the form of
+initialisation of weights, dropout, data shuffling, etc. This
+randomness often produces different models that eventually converge
+after many epochs. We can leverage each models results by creating an
+ensemble of models. Here we can choose many ways to combine the results
+of each model, such as through averaging. Note that while model
+performance may increase, the computational cost of training and
+inference will also increase significantly.
+\section{Optimisation Algorithms and Regularisation}
+The following sections discuss various techniques used to solve
+nonlinear optimisation problems. The optimisation problems relevant to
+machine learning are minimisation problems that aim to minimise the
+loss function of a given learning method. The following sections
+discuss several iterative algorithms that successively update the
+weights of a model using the gradient of the loss function.
+\subsection{Gradient Descent}
+Gradient descent is the most basic optimisation algorithm, used to
+minimise a loss function. The algorithm works by taking steps in the
+opposite direction of the gradient of the loss function, which is the
+direction of greatest decrease. The resulting update rule is given by:
+\begin{equation*}
+    w \leftarrow w - \alpha \pdv{L\left( w \right)}{w}
+\end{equation*}
+for a learning rate \(\alpha\). This learning rate is a hyperparameter
+that controls the size of each step. If the learning rate is too small,
+the algorithm may take a long time to converge, and if it is too large,
+the algorithm may oscillate around a minimum.
+\subsection{Stochastic Gradient Descent}
+There are several variants of gradient descent that are used to improve
+convergence and speed up training.
+\begin{itemize}
+    \item \textbf{Batch Gradient Descent}: Weights are updated after
+          computing the gradient of the loss function on the entire
+          training set:
+          \begin{equation*}
+              \symbf{w} \leftarrow \symbf{w} - \alpha \pdv{J\left( \symbf{w} \right)}{\symbf{w}}, \quad J\left( \symbf{w} \right) = \frac{1}{n} \sum_{i = 1}^n L^{\left( i \right)}\left( \symbf{w} \right).
+          \end{equation*}
+          This update rule is performed 1 time (1 update per epoch).
+    \item \textbf{Mini-Batch Gradient Descent}: Weights are updated after
+          computing the gradient of the loss function on a small batch
+          of the training set:
+          \begin{equation*}
+              \symbf{w} \leftarrow \symbf{w} - \alpha \pdv{J\left( \symbf{w} \right)}{\symbf{w}}, \quad J\left( \symbf{w} \right) = \frac{1}{b} \sum_{i = 1}^b L^{\left( i \right)}\left( \symbf{w} \right)
+          \end{equation*}
+          for a batch size \(b\). This update rule is performed
+          \(\ceil{n/b}\) times (\(\ceil{n/b}\) updates per epochs).
+    \item \textbf{Stochastic Gradient Descent}: Weights are updated after
+          computing the gradient of the loss function on a single
+          training example (batch size of 1):
+          \begin{equation*}
+              \symbf{w} \leftarrow \symbf{w} - \alpha \pdv{L^{\left( i \right)}\left( \symbf{w} \right)}{\symbf{w}}
+          \end{equation*}
+          for \(1 \leqslant i \leqslant n\). This update rule is
+          performed \(n\) times (\(n\) updates per epochs).
+\end{itemize}
+\subsubsection{Epochs}
+Each update step will be performed repeatedly until the entire training
+set has been considered. An epoch represents the time taken to apply
+gradient descent on the entire training set. The number of updates in
+an epoch is the number of batches required to cover the entire training
+set. That is,
+\begin{equation*}
+    \text{updates per epoch} = \frac{n}{b}.
+\end{equation*}
+When setting an upper bound on the number of epochs, we should consider
+the following:
+\begin{itemize}
+    \item Does the validation accuracy continue to increase after the
+          current epoch?
+    \item Will the training set perform better than the validation set
+          after the current epoch, leading to overfitting?
+\end{itemize}
+\subsubsection{Batch Size}
+Choosing a small batch size will lead to a greater number of updates
+per epoch, but result in a suboptimal path toward a minimum, as each
+batch is less representative of the overall dataset, and therefore the
+average gradient will not point toward the direction of greatest
+descent. A small batch size may also lead to underfitting if classes
+are unbalanced.
+
+Choosing a large batch size will lead to a more direct path toward a
+local minimum, but may require more epochs to reach a satisfactory
+result. A large batch size may also result in higher memory usage.
 \subsection{Optimisers}
+Several variants of gradient descent have been proposed to improve the
+convergence and performance of the gradient descent algorithm. The
+following sections discuss how some optimisers use adaptive learning
+rates and parameter updates based on previous gradients to navigate the
+parameter space more effectively.
 \subsubsection{Momentum}
-\subsubsection{Adam}
+The momentum optimiser computes an intermediate velocity vector
+\(\symbf{v}\) that depends on the previous velocity of the update rule
+and the gradient of the weights. This optimser aims to smooth the
+updates made by the stochastic gradient descent algorithm by keeping
+the momentum of previous updates. The momentum update rule is shown
+below:
+\begin{align*}
+    \symbf{v} & \leftarrow m \symbf{v} - \alpha \pdv{L^{\left( i \right)}\left( \symbf{w} \right)}{\symbf{w}} \\
+    \symbf{w} & \leftarrow \symbf{w} + \symbf{v}
+\end{align*}
+where \(0 \leqslant m \leqslant 1\) is the momentum and \(\alpha\) is
+the learning rate.
+\subsubsection{Nesterov Accelerated Gradient (NAG)}
+A method closely related to the momentum method is Nesterov Accelerated
+Gradient (NAG). The aim of NAG is to correct oscillations in the
+momentum method by computing an intermediate update \(\symbf{w}'\)
+using the momentum from the previous iteration, and correcting this
+update with the gradient of the weights at \(\symbf{w}'\). The NAG
+update rule is shown below:
+\begin{align*}
+    \symbf{w}' & \leftarrow \symbf{w} - m \symbf{v}                                               \\
+    \symbf{v}  & \leftarrow \alpha \pdv{L^{\left( i \right)}\left( \symbf{w}' \right)}{\symbf{w}} \\
+    \symbf{w}  & \leftarrow \symbf{w} - \symbf{v}
+\end{align*}
+where \(0 \leqslant m \leqslant 1\) is the momentum and \(\alpha\) is
+the learning rate. This allows the algorithm to correct a high loss
+momentum update after it has been made.
+\subsubsection{Resilient Propagation (RProp)}
+In some cases, the gradient of the loss function can either be
+extremely small, leading to slow convergence, or extremely large,
+leading to oscillatory behaviour around minima, and possibly
+divergence. To combat this, let us instead consider only the sign of
+the gradient and update the learning rate instead.
+\begin{align*}
+    \symbf{\alpha} & \leftarrow
+    \begin{cases}
+        \min{\left( \alpha^{+} \symbf{\alpha},\: \alpha_{\mathrm{max}} \right)}, & \pdv{L^{\left( i \right)}\left( \symbf{w} \right)}{\symbf{w}} \symbf{g} > 0 \\
+        \max{\left( \alpha^{-} \symbf{\alpha},\: \alpha_{\mathrm{min}} \right)}, & \pdv{L^{\left( i \right)}\left( \symbf{w} \right)}{\symbf{w}} \symbf{g} < 0 \\
+        \symbf{\alpha},                                                          & \text{otherwise}
+    \end{cases}
+    \\
+    \symbf{g}      & \leftarrow \pdv{L^{\left( i \right)}\left( \symbf{w} \right)}{\symbf{w}}   \\
+    \symbf{w}      & \leftarrow \symbf{w} - \symbf{\alpha} \odot \sgn{\left( \symbf{g} \right)}
+\end{align*}
+In the first step, we update \(\alpha\) so that it is between
+\(\alpha^{-} < 1 < \alpha^{+}\), imposing the lower
+and upper bounds \(\alpha_{\mathrm{min}}\) and \(\alpha_{\mathrm{max}}\)
+to ensure that the learning rate does not become to small or too large.
+This choice depends on the product of the gradient of the loss function
+at the current step
+\(\pdv{L^{\left( i \right)}\left( \symbf{w} \right)}{\symbf{w}}\) and
+the gradient of the loss function at the previous step \(\symbf{g}\).
+
+\(\symbf{g}\) is then updated with the current gradient, and the weights
+are updated using the adaptive learning and sign of \(\symbf{g}\). Note
+that the \(\min\), \(\max\), and \(\sgn\) functions are applied
+element-wise.
+\subsubsection{Adaptive Gradient (AdaGrad)}
+
 \subsubsection{RMSprop}
+\begin{align*}
+    \symbf{s} & \leftarrow \beta \symbf{s} + (1 - \beta) \left( \nabla J\left( \symbf{w} \right) \odot \nabla J\left( \symbf{w} \right) \right) \\
+    \symbf{w} & \leftarrow \symbf{w} - \alpha \left( \frac{\nabla J\left( \symbf{w} \right)}{\sqrt{\symbf{s} + \epsilon}} \right)
+\end{align*}
+\subsubsection{Adam}
+\begin{align*}
+    \symbf{m}       & \leftarrow \beta_1 \symbf{m} + (1 - \beta_1) \nabla J\left( \symbf{w} \right)                                                       \\
+    \symbf{s}       & \leftarrow \beta_2 \symbf{s} + (1 - \beta_2) \left( \nabla J\left( \symbf{w} \right) \odot \nabla J\left( \symbf{w} \right) \right) \\
+    \hat{\symbf{m}} & \leftarrow \frac{\symbf{m}}{1 - \beta_1^t}                                                                                          \\
+    \hat{\symbf{s}} & \leftarrow \frac{\symbf{s}}{1 - \beta_2^t}                                                                                          \\
+    \symbf{w}       & \leftarrow \symbf{w} - \alpha \left( \frac{\hat{\symbf{m}}}{\sqrt{\hat{\symbf{s}} + \epsilon}} \right)
+\end{align*}
+\subsection{Regularisation}
+Deep neural networks often result in a large number of parameters that
+exceed the number of samples used to train the model. This makes it
+very easy for the model to overfit the training data. In such cases, we
+can either:
+\begin{itemize}
+    \item Modify the network to reduce overfitting
+    \item Increase the number of training samples
+\end{itemize}
+\subsubsection{Dropout Layers}
+Dropout layers allow us to randomly disconnect some neurons in the
+network during training to perform each backpropagation step on a
+different network. This helps to prevent the network from overfitting
+the training data at the cost of increased training time.
+\subsubsection{Batch Normlisation}
+To allow each layer to train on the same scale upon each update, we can
+apply a batch normalisation layer to the network which normalises the
+output of the previous layer to have a mean of 0 and a standard
+deviation of 1 (although the mean and standard deviation can be learned
+also). This layer should be placed before any activation functions in
+the network to make it easier to consider the impact of the proceeding
+layer and improve training speed. Note that batch normalisation layers
+do not need to be used very frequently.
+\subsubsection{Weight Regularisation}
+As with linear regression, we want to ensure that weights do not become
+too large. We can therefore use weight regularisation to penalise large
+weights in a network as a sum of the weights. This can be done using
+\textbf{L1} or \textbf{L2} regularisation (or both), where we may
+choose to apply this penalty on weights, biases, or activation
+functions.
+\subsubsection{Fine Tuning}
+Fine tuning is the process of taking a pre-trained model and training
+it on a new dataset. This is often done by freezing some percentage of
+weights in the earlier layers and training the remaining layers in
+addition to new layers that were added specifically for the new task.
+This is useful when the dataset is very small compared to the number of
+parameters in the network, and allows us to reduce the training time of
+large networks by taking advantage of similar features learned in the
+pre-trained model.
+\subsubsection{Augmentation}
+To avoid overfitting, we can increase the size of the training set by
+applying transformations to the data. This is known as data
+augmentation. These transformations can include:
+\begin{itemize}
+    \item Rotating the image
+    \item Flipping the image
+    \item Cropping the image
+    \item Scaling the image
+    \item Translating the image
+    \item Changing the brightness of the image
+    \item Adding noise or colour shifts to the image
+\end{itemize}
+Note that augmentation should not change the meaning of an image, nor
+should it be too extreme that such an image would not be found in the
+test dataset.
+\section{Convolutional Neural Networks}
+A convolutional neural network (CNN) is a type of neural network that
+is used to process spatial data, such as images. CNNs are characterised
+by their use of convolutional layers, which apply a series of filters
+to images to extract features.
+\subsection{Convolutional Layers}
+A convolutional layer consists of convolution operations defined:
+\begin{equation*}
+    \symbf{G}_{xy} = \symbf{\omega} \ast \symbf{F} = \sum_{i = 0}^{H-1} \sum_{j = 0}^{W-1} \sum_{k = 1}^c \symbf{\omega}_{ij} \symbf{F}_{x - \floor{h/2} + i,\: y - \floor{w/2} + j, \: k}
+\end{equation*}
+where \(\symbf{F}\) is an image of dimensions \(w \times h \times c\),
+\(\symbf{\omega}\) is a kernel of dimensions \(W \times H\), and
+\(\symbf{G}\) is the output which has dimensions \(w \times h \times n\),
+where \(n\) is the number of filters in the convolutional layer.
+
+The choice of kernel determines the kind of features that are extracted
+from an image. When used in a neural network, the weights of this
+kernel are learned during training, allowing the network to potentially
+learn several features at once. For an image with colour channels, the
+filter is applied to each channel separately, and the results are
+summed to produce a single output. This results in the following number
+of parameters:
+\begin{equation*}
+    \text{number of parameters} = \left( w \times h \times c + 1 \right) \times n.
+\end{equation*}
+Note that the \(+1\) term accounts for the bias term in the convolutional
+layer. As this kernel is variable in size, the convolution along the
+border of an image may exceed the dimensions of the image. In such cases,
+we can choose to:
+\begin{itemize}
+    \item Pad the image with 0, 1, or \(-1\) to maintain the dimensions
+          of the image.
+    \item Apply the convolution operation only to the pixels that are
+          fully covered by the kernel, resulting in a smaller output.
+\end{itemize}
+We can also decide to apply a stride to the convolution operation, which
+determines the number of pixels the kernel moves across the image.
+\subsection{Pooling Layers}
+Pooling layers are used to reduce the dimensions of the outputs
+produced by convolutional layers, and therefore reduce the number of
+parameters in the network. Pooling layers are placed after
+convolutional layers and are used to aggregate features in one of the
+following ways:
+\begin{itemize}
+    \item \textbf{Max Pooling}: The maximum value in a region is
+          selected as the output. This is the preferred type of pooling.
+    \item \textbf{Min Pooling}: The minimum value in a region is
+          selected as the output.
+    \item \textbf{Average Pooling}: The average value in a region is
+          selected as the output.
+\end{itemize}
+The size of the pooling region determines the size of the output.
+\subsection{Deep Convolutional Neural Networks}
+Convolutional neural networks are most effective when multiple layers
+are stacked on top of each other. This allows the network to learn
+increasingly complex features from the input data. Often this is done
+with small kernels of size \(3 \times 3\) or \(5 \times 5\), and each
+convolutional layer is followed by a pooling layer to reduce the
+dimensions of the output.
+\subsubsection{VGG Networks}
+The Visual Geometry Group (VGG) network, is one such network that
+primarily consists of stacked convolutional layers followed by max
+pooling layers, all repeated, with a few fully connected layers near
+the end. While increasing the number of convolutions allows the network
+to learn complex features, it also becomes increasingly difficult to
+train the network. This is bceause data now has to pass through many
+layers before reaching the output, causing small changes in early
+layers to have significant impacts on later layers. Additionally,
+backpropagation may result in the gradient vanishing or exploding as it
+passes through many layers, causing the network to stop learning beyond
+a certain number of layers. Therefore, we need a more direct connection
+from the input to the output of a network.
+\subsubsection{Residual Networks}
+To combat this, we can use residual networks, which introduce skip
+connections that allow the network to learn the difference or sum of
+the original input and the output of convolutional layers, allowing the
+network to give meaningful feedback to earlier layers. When the number
+of layers is too large, we can also introduce bottleneck layers that
+reduce the number of parameters in the network. This is done with a \(1
+\times 1\) convolutional layer that reduces the number of channels in
+the input, followed by a \(3 \times 3\) convolutional layer, and
+finally a \(1 \times 1\) convolutional layer that increases the number
+of channels back to the original number.
+\part{Unsupervised Learning}
+\section{Clustering}
+Clustering is an unsupervised learning method used to discover patterns
+in data. The goal of a clustering algorithm is to group similar data
+into clusters allowing us to identify patterns or abnormalities in the
+data.
+\subsection{K-Means Clustering}
+K-means clustering aims to find a set of \(k\) clusters that minimise
+the distances between data points and their cluster centres. The
+algorithm works by iteratively updating the cluster centres and
+reassigning data points to the nearest cluster. The algorithm is
+summarised below:
+\begin{enumerate}
+    \item Choose \(k\) initial cluster centres.
+    \item Assign each data point to the nearest cluster.
+    \item Update the cluster centres by taking the mean of the data
+          points in each cluster.
+    \item Repeat steps 2 and 3 until the cluster centres converge.
+\end{enumerate}
+As these clusters are sensitive to the initialisation of the cluster
+centres, it is often useful to run the algorithm multiple times with
+different initialisations and choose the best result. These differences
+become more pronounced as the number of data points and clusters
+increases.
+
+The distance metric used in this algorithm depends entirely on the
+data. When the dimensions of the data are not on the same scale, it is
+often useful to normalise or standardise the data before running the
+algorithm, so that no single dimension dominates the distance
+calculation. Note that because of this, the algorithm is restricted to
+roughly spherical clusters.
+\subsection{Gaussian Mixture Models}
+Rather than assigning a data point to a single cluster, Gaussian
+Mixture Models (GMMs) assign a probability that a data point belongs to
+a cluster.
+%TODO: Add mathematical formulation
+\subsection{Model Selection}
+When choosing the number of clusters in the above algorithms, we can
+use one of two metrics\footnote{Here \(c^{\left( i \right)}\) is the
+cluster assignment of the \(i\)-th data point, and
+\(\symbf{\mu}_{c^{\left( i \right)}}\) is the cluster centre of the
+assigned cluster.}:
+\begin{itemize}
+    \item \textbf{Reconstruction Error}: Average distance to assigned
+          cluster centre:
+          \begin{equation*}
+              J\left( c,\: \mu \right) = \sum_{i = 1}^n \norm*{\symbf{x}^{\left( i \right)} - \symbf{\mu}_{c^{\left( i \right)}}}^2.
+          \end{equation*}
+          This metric is minimised when the number of clusters is equal to the number of data points.
+          \begin{itemize}
+              \item The optimal number of clusters is often the point
+                    at which the rate of decrease in the reconstruction
+                    error slows down. This is known as the
+                    \textbf{elbow point} of the curve.
+          \end{itemize}
+    \item \textbf{Bayesian Information Criterion (BIC)}: A metric that
+          captures how informative a model is, while considering model
+          complexity. An approximation of the BIC for \(k\)-means is given by:
+          \begin{equation*}
+              \text{BIC} = n \log{\sum_{i = 1}^n \norm*{\symbf{x}^{\left( i \right)} - \symbf{\mu}_{c^{\left( i \right)}}}^2} + k \log{n}.
+          \end{equation*}
+          \begin{itemize}
+              \item The optimal number of clusters is the number of
+                    clusters that minimises the BIC.
+          \end{itemize}
+\end{itemize}
+The choice of \(k\) should be chosen with care to avoid under-clustering,
+where true clusters is merged into a single cluster, or over-clustering,
+where a true cluster is divided into multiple sub-clusters.
+\section{Dimensionality Reduction}
+Dimensionality reduction is a technique used to reduce the number of
+features in a dataset. This is useful when the number of features is
+very large and the data is sparse, as it can help to reduce the
+computational cost of training a model by removing less important
+features.
+\subsection{Principal Component Analysis}
+Principal Component Analysis (PCA) is an unsupervised technique used to
+reduce the dimensionality of a dataset by projecting the data onto a
+lower dimensional space that preserves as much of the variance in the
+data as possible.
+% Consider a standardised dataset represented by the matrix \(\symbf{X} \in \R^{n \times p}\).
+% Let us assume that the direction of greatest variance in the data is
+% given by the unit vector \(\symbf{u}_1\). The projection of the data
+% onto this vector is given by:
+% \begin{equation*}
+%     \symbf{p} = \symbf{u}_1 \left( \symbf{u}_1^\top \symbf{u}_1 \right)^{-1} \symbf{u}_1 \symbf{X}.
+% \end{equation*}
+% TODO: Add mathematical formulation
+Note that we must first standardise the data before applying PCA, and
+ensure that the number of samples is greater than the number of features.
+\subsection{Linear Discriminant Analysis}
+Linear Discriminant Analysis (LDA) is a supervised method used to find a
+projection that best discriminates between classes in a dataset. It
+considers the variance of the data within each class, as well as the
+variance of the data between classes, and aims to maximise the ratio of
+these two variances.
+
+LDA returns \(k - 1\) components.
+% TODO: Add mathematical formulation
+
+Note that LDA is sensitive to the number of samples per class, so it is
+important to ensure that each class has more samples than the number of
+features in the dataset. Having too many features or classes may also
+lead to poor performance. In particular, the scatter matrices used in this
+algorithm bay become close to singular and lead to overfitting. In such
+cases, it may be useful to first apply PCA before applying LDA.
+
+Unlike PCA, LDA also cannot be inverted to reconstruct the original data,
+as it removes information from the data.
+\subsection{t-Distributed Stochastic Neighbour Embedding}
+t-Distributed Stochastic Neighbour Embedding (t-SNE) is a technique
+used to visualise high-dimensional data in a 2-dimensional space. It uses
+local relationships to create a low-dimensional mapping that can capture
+the non-linear structure of the data.
+% TODO: Add mathematical formulation
 \section{Autoencoders}
+\section{Sequences and Attention Mechanisms}
 \newpage
 \begin{appendix}
     \section{Numerical Summaries of Data}\label{appendix:numerical-summaries}
